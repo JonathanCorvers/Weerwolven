@@ -1,0 +1,39 @@
+{% extends "Autospelleider/auto_boodschappen/spelleider_interface_auto_m.html" %}
+
+{% load static %}
+{% csrf_token %}
+
+       {% block js %}
+       {% endblock %}
+       {% block css %}
+       {% endblock %}
+                        {% block startform %}{% endblock %}
+                            {% block villager_action_buttons %}
+                            <div class="badge" id="badge{{ forloop.counter }}">
+                                <div class="rotated-form">
+                                    {% csrf_token %}
+                                    <button id="button{{ forloop.counter }}" class="btn btn-info rotated-btn waves-effect waves-light levend{{ villager.alive }}">{{ villager.participant.first_name }}</button>
+                                </div>
+                            </div>
+                            {% endblock %}
+                            {% block spelfase_kort %}
+Leg de rollen klaar. Ze staan opgelijst bij meer info.
+                            {% endblock %}
+                                    {% block extra_buttons %}
+                                    {% endblock %}
+                            {% block spelfase_card_title %}Voorbereiding rollen{% endblock %}
+                                {% block spelfase_card_explanation %}
+De volgende rollen moeten worden klaargelegd:
+{% for character in village.get_start_characters %}
+{% for character_amount in village.get_start_characters_amounts %}
+{% if forloop.counter ==  forloop.parentloop.counter %}
+<br> {{ character_amount }} maal {{ character }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+<br> Wanneer je dit hebt gedaan klik je op verder.
+<br> <a href="{% url 'Autospelleider:spelleiderInterfaceAuto' village_name=village.village_name auto_boodschap='namenrondje'  %}"><button class="btn waves-effect waves-light">Verder</button> </a>{% endblock %}
+                        {% block endform %}{% endblock %}
+    {% block villager_action_buttons_modals %}
+    {%endblock %}
+

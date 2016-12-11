@@ -1,0 +1,35 @@
+
+{% extends "Autospelleider/navbar.html" %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>{{ village.village_name }}</h1>
+    <p></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Deelnemers in {{ village.village_name }}</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Groep</th>
+        <th>Grootte</th>
+        <th>Reservatie</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in village.group_set.all %}
+      <tr>
+        <td>{{ group.group_ID }}</td>
+        <td>{{ group.group_size }}</td>
+        <td>{% for participant in group.participant_set.all|slice:":1" %}{{ participant.reservation_ID }}{% endfor %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

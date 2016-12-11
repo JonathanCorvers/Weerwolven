@@ -1,0 +1,43 @@
+{% extends "Autospelleider/navbar.html" %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>Inschrijvingen</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Informatie over de inschrijvingen</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>E-mail</th>
+        <th>Reservatienummer</th>
+        <th>ID</th>
+        <th>Groepsnummer</th>
+        <th>Betaler</th>
+        <th>Betaald</th>
+        <th>Aanwezig</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inschrijving in inschrijvingen_list %}
+      <tr>
+            <td>{{ inschrijving.first_name }} {{ inschrijving.last_name }}</td>
+            <td>{{ inschrijving.email }}</td>
+            <td>{{ inschrijving.reservation.id }}</td>
+            <td>{{ inschrijving.id }}</td>
+            <td>{{ inschrijving.group.group_code }}</td>
+            <td>{{ inschrijving.main_subscriber }}</td>
+            <td>{{ inschrijving.reservation.paid }}</td>
+            <td>{{ inschrijving.present }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

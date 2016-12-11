@@ -1,0 +1,62 @@
+{% extends "Autospelleider/navbar.html" %}
+
+    {% block css %}
+<style>
+    .submitRow {
+        padding-top: 2%;
+        }
+</style>
+      {% endblock %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>Duid de rollen aan waarmee we gaan spelen</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <form class="form-inline" action="{% url 'Autospelleider:balanceVillages' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    {% for character in character_sub_classes %}
+                    {% if not forloop.counter == 1 and forloop.counter|divisibleby:"6" %}
+                    <div class="col-lg-2">
+                        <div class="btn-group charButton" data-toggle="buttons">
+                            <label class="characterCheckBox btn btn-info"><input name="checks" type="checkbox" value="{{ character }}">{{ character }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% else %}
+                    <div class="col-lg-2">
+                        <div class="btn-group charButton" data-toggle="buttons">
+                            <label class="characterCheckBox btn btn-info"><input name="checks" type="checkbox" value="{{ character }}">{{ character }}</label>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="row submitRow">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-4">
+                        <label for="extracards">Hoeveel extra kaarten? </label>
+                        <input type="number" name="extra_cards" id="extracards" value="extra_cards"/>
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="amount">Gewenste balans: </label>
+                        <input type="number" name="goal_balance" id="amount" value="aantal"/>
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="submit" id="charSubmit" value="Klaar" class="btn btn-info btn-lg"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

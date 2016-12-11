@@ -1,0 +1,50 @@
+{% extends "Autospelleider/navbar.html" %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>Deelnemers</h1>
+      {% if dateBool %}
+        <form action="{% url 'Autospelleider:genereerInschrijvingen' %}" method="post">
+            {% csrf_token %}
+            <label for="amount">Aantal: </label>
+            <input type="number" name="amount" id="amount" value="aantal" placeholder="Default = 72" />
+            <input type="submit" value="Genereer inschrijvingen" class="btn btn-info">
+        </form>
+      {% endif %}
+      <button type="button" id="importeerInschrijvingen" class="btn btn-info btn-md">Importeer inschrijvingen</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Informatie over de dorpen</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>Reservatienummer</th>
+        <th>ID</th>
+        <th>Groepsnummer</th>
+        <th>Betaler</th>
+        <th>Betaald</th>
+        <th>Aanwezig</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for participant in participants_list %}
+      <tr>
+            <td>{{ participant.first_name }} {{ participant.last_name }}</td>
+            <td>{{ participant.reservation_ID }}</td>
+            <td>{{ participant.participant_ID }}</td>
+            <td>{{ participant.group.group_ID }}</td>
+            <td>{{ participant.main_subscriber }}</td>
+            <td>{{ participant.paid }}</td>
+            <td>{{ participant.present }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

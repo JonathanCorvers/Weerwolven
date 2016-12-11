@@ -1,0 +1,530 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" bgproperties="fixed">
+    <head>
+        <title>Limburgse Wolven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <link rel="stylesheet" href="{% static 'Autospelleider/materialize/css/materialize.min.css' %}">
+        <script src="{% static 'Autospelleider/materialize/js/materialize.min.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+        <script>
+
+        function eventFire(el, etype){
+          if (el.fireEvent) {
+            el.fireEvent('on' + etype);
+          } else {
+            var evObj = document.createEvent('Events');
+            evObj.initEvent(etype, true, false);
+            el.dispatchEvent(evObj);
+          }
+        }
+        var counter = 0;
+        var first_names = [];
+        var last_names = [];
+        var subscriptions = [];
+        var emails = [];
+        var ages = [];
+        var postdata = {};
+
+        function hasClass(element, cls) {
+            return ((' ' + element.classList + ' ').indexOf(' ' + cls + ' ') > -1);
+        }
+
+        function reloadDocument(){
+
+            $('select').material_select();
+            $('.carousel').carousel();
+            $('.collapsible').collapsible({
+                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+            });
+
+            $('.custom-selected').on('change', function() {
+                var selection = $(this).val();
+                if(selection[0]=='c') {
+                    var selected_subscription = '#custom-code';
+                    var selected_subscriptionc = '#groepscode';
+                    var selected_subscriptiong = '#groepscodelabel';
+                    var k = 6;
+                    while(selection.length > k) {
+                        selected_subscription += selection[k];
+                        selected_subscriptionc += selection[k];
+                        selected_subscriptiong += selection[k];
+                        k = k + 1;
+                    }
+                    $(selected_subscription).removeClass("hide");
+                    $(selected_subscriptionc).removeClass("hide");
+                    $(selected_subscriptiong).removeClass("hide");
+                }
+                if(selection[0]=='n') {
+                    var selected_subscription = '#custom-code';
+                    var selected_subscriptionc = '#groepscode';
+                    var selected_subscriptiong = '#groepscodelabel';
+                    var k = 9;
+                    while(selection.length > k) {
+                        selected_subscription += selection[k];
+                        selected_subscriptionc += selection[k];
+                        selected_subscriptiong += selection[k];
+                        k = k + 1;
+                    }
+                    $(selected_subscription).addClass("hide");
+                    $(selected_subscriptionc).addClass("hide");
+                    $(selected_subscriptiong).addClass("hide");
+                    $(selected_subscriptionc).val("");
+                }
+            });
+            var subs = {{ subscriptions|length }};
+
+            $('.submit').click(function() {
+
+                var action = $(this).val();
+
+                if(action=='finalsubmit') {
+
+                    {% for subscription in subscriptions %}
+                        if (!postdata['custom-selected{{ forloop.counter }}']) {
+                            postdata['custom-selected{{ forloop.counter }}'] = [];
+                        }
+                        postdata['custom-selected{{ forloop.counter }}'].push($('#custom-selected{{ forloop.counter }}').val());
+
+                        postdata['groepscode{{ forloop.counter }}'] = [];
+                        postdata['groepscode{{ forloop.counter }}'].push("b'" + ($('#groepscode{{ forloop.counter }}').val()).toString() + "'");
+                    {% endfor %}
+
+                    var index;
+                    var subs = {{ subscriptions|length }};
+                    postdata['subs_amount'] = [];
+                    postdata['subs_amount'].push(subs.toString());
+
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    var csrftoken = getCookie('csrftoken');
+                    function csrfSafeMethod(method) {
+                        // these HTTP methods do not require CSRF protection
+                        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+                    $.ajaxSetup({
+                        beforeSend: function(xhr, settings) {
+                            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                            }
+                        }
+                    });
+                    var mydata = $.param(postdata);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'Autospelleider:changeReservation' reservation_code %}",
+                        data: {'mydata': mydata},
+                        success: function(data) {
+                            $('#form-step').html(data);
+                        }
+                    });
+                reloadDocument();
+                }
+            });
+        }
+        $(document).ready(function(){
+            reloadDocument();
+            eventFire(document.getElementById('header-inschrijven'), 'click');
+        });
+        </script>
+        <style>
+            @keyframes animatedPerson {
+                from { background-position: -5vw bottom, center center; }
+                to { background-position: left bottom, center center; }
+            }
+            @-webkit-keyframes animatedPerson {
+                from { background-position: -5vw bottom, center center; }
+                to { background-position: left bottom, center center; }
+            }
+            @-ms-keyframes animatedPerson {
+                from { background-position: -5vw bottom, center center; }
+                to { background-position: left bottom, center center; }
+            }
+            @-moz-keyframes animatedPerson {
+                from { background-position: -5vw bottom, center center; }
+                to { background-position: left bottom, center center; }
+            }
+            @keyframes animatedBackground {
+                0% { background-size: auto 50vh, auto 150vh; background-position: -5vw bottom, center center; }
+                5% { background-size: auto 50vh, auto 147.5vh; background-position: -5vw bottom, center center; }
+                10% { background-size: auto 50vh, auto 145vh; background-position: -5vw bottom, center center; }
+                15% { background-size: auto 50vh, auto 142.5vh; background-position: -5vw bottom, center center; }
+                20% { background-size: auto 50vh, auto 140vh; background-position: -5vw bottom, center center; }
+                25% { background-size: auto 50vh, auto 137.5vh; background-position: -5vw bottom, center center; }
+                30% { background-size: auto 50vh, auto 135vh; background-position: -5vw bottom, center center; }
+                35% { background-size: auto 50vh, auto 132.5vh; background-position: -5vw bottom, center center; }
+                40% { background-size: auto 50vh, auto 130vh; background-position: -5vw bottom, center center; }
+                45% { background-size: auto 50vh, auto 127.5vh; background-position: -5vw bottom, center center; }
+                50% { background-size: auto 50vh, auto 125vh; background-position: -5vw bottom, center center; }
+                55% { background-size: auto 50vh, auto 122.5vh; background-position: -5vw bottom, center center; }
+                60% { background-size: auto 50vh, auto 120vh; background-position: -5vw bottom, center center; }
+                65% { background-size: auto 50vh, auto 117.5vh; background-position: -5vw bottom, center center; }
+                70% { background-size: auto 50vh, auto 115vh; background-position: -5vw bottom, center center; }
+                75% { background-size: auto 50vh, auto 112.5vh; background-position: -5vw bottom, center center; }
+                80% { background-size: auto 50vh, auto 110vh; background-position: -5vw bottom, center center; }
+                85% { background-size: auto 50vh, auto 107.5vh; background-position: -5vw bottom, center center; }
+                90% { background-size: auto 50vh, auto 105vh; background-position: -5vw bottom, center center; }
+                95% { background-size: auto 50vh, auto 102.5vh; background-position: -5vw bottom, center center; }
+                100% { background-size: auto 50vh, cover; left bottom, center center; }
+            }
+            @-webkit-keyframes animatedBackground {
+                from { background-size: auto 50vh, auto 150vh; background-position: -5vw bottom, center center; }
+                to { background-size: auto 50vh, cover; left bottom, center center; }
+            }
+            @-ms-keyframes animatedBackground {
+                from { background-size: auto 50vh, auto 150vh; background-position: -5vw bottom, center center; }
+                to { background-size: auto 50vh, cover; left bottom, center center; }
+            }
+            @-moz-keyframes animatedBackground {
+                from { background-size: auto 50vh, auto 150vh; background-position: -5vw bottom, center center; }
+                to { background-size: auto 50vh, cover; left bottom, center center; }
+            }
+
+            .overflow-hidden {
+                overflow: hidden;
+            }
+
+            .dropdown-content li>span {
+                color: #9c2424 !important;
+            }
+
+            .select-dropdown li.disabled>span, .select-dropdown li.optgroup {
+                color: rgba(0,0,0,0.3) !important;
+                background-color: transparent;
+            }
+
+            .progress {
+                background-color:rgba(156, 36, 36, 0.25) !important;
+            }
+
+            .determinate {
+                background-color: #9c2424 !important;
+                opacity: 1 !important;
+            }
+
+            .input-field label {
+                color: #555555 !important;
+            }
+
+            .input-field label.active {
+                color: #9c2424 !important;
+            }
+
+            .input-field input:focus + label {
+                color: #9c2424 !important;
+            }
+
+            .input-field textarea:focus + label {
+                color: #9c2424 !important;
+            }
+
+            .input-field input + label {
+                color: #555555 !important;
+            }
+
+            .input-field textarea + label {
+                color: #555555 !important;
+            }
+
+            /* label underline focus color */
+            .input-field input:focus {
+                border-bottom: 1px solid #9c2424 !important;
+                box-shadow: 0 1px 0 0 #9c2424 !important;
+            }
+
+
+            /* label underline focus color */
+            .input-field textarea:focus {
+                border-bottom: 1px solid #9c2424 !important;
+                box-shadow: 0 1px 0 0 #9c2424 !important;
+            }
+
+            /* label underline color */
+            .input-field input {
+                border-bottom: 1px solid #555555 !important;
+                box-shadow: 0 1px 0 0 #555555 !important;
+            }
+
+            /* label underline color */
+            .input-field textarea {
+                border-bottom: 1px solid #555555 !important;
+                box-shadow: 0 1px 0 0 #555555 !important;
+            }
+
+            .red {
+                text-color: black !important;
+                background-color: #9c2424 !important;
+            }
+
+            html {
+                min-height: 100vh;
+                background-image: url({% static 'Autospelleider/images/Sarah.png' %}), url({% static 'Autospelleider/images/bg_bos.jpg' %});
+                linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) );
+                background-position: left bottom, center center;
+                background-repeat: no-repeat, no-repeat, repeat-x;
+                background-size: auto 50vh, cover;
+                background-attachment: fixed, fixed;
+                animation: animatedPerson 1s ease-out;
+                animation-iteration-count: 1;
+                -ms-animation: animatedPerson 1s ease-out;
+                -ms-animation-iteration-count: 1;
+                -moz-animation: animatedPerson 1s ease-out;
+                -moz-animation-iteration-count: 1;
+                -webkit-animation: animatedPerson 1s ease-out;
+                -webkit-animation-iteration-count: 1;
+                /*animation: animatedBackground 4s ease-out;
+                animation-iteration-count: 1;
+                -ms-animation: animatedBackground 4s ease-out;
+                -ms-animation-iteration-count: 1;
+                -moz-animation: animatedBackground 4s ease-out;
+                -moz-animation-iteration-count: 1;
+                -webkit-animation: animatedBackground 4s ease-out;
+                -webkit-animation-iteration-count: 1;*/
+            }
+
+            h1, h2, h3, h4, h5 {
+                color: #9c2424;
+            }
+
+            .collapsible-body {
+                margin-bottom: 0;
+                top: 0;
+                left: 0;
+                height: inherit;
+                border: 0;
+                width: 102.02%;
+                background-color:rgba(255, 255, 255, 0.65);
+            }
+
+            .header-div {
+                top: 0;
+                left: 0;
+                height: 100%;
+                border: 0;
+                background-color:rgba(255, 255, 255, 0.65);
+            }
+
+            .collapsible-header {
+                margin-bottom: 0;
+                padding-right: 0;
+                width: 100%;
+                background: none;
+            }
+            #header-about.active, #header-event.active, #header-waarom.active, #header-inschrijven.active, #header-contact.active{
+                top: 0;
+                left: 0;
+                margin-bottom: 0;
+                width: 102.02%;
+                background-color:rgba(255, 255, 255, 0.65);
+            }
+
+            #header-about.active .header-div, #header-event.active .header-div, #header-waarom.collapsible-header.active .header-div, #header-inschrijven.collapsible-header.active .header-div, #header-contact.active .header-div {
+                top: 0;
+                left: 0;
+                height: 100%;
+                border: 0;
+                background-color:rgba(255, 255, 255, 0);
+            }
+
+            #header-about, #header-event, #header-waarom, #header-inschrijven, #header-contact {
+                border: 0;
+                top: 0;
+                left: 0;
+                margin-bottom: 0;
+                width: 102.02%;
+            }
+
+            .collapsible-body-div {
+                background: none;
+            }
+        </style>
+        <style>
+            /*********************** tags **********************/
+
+#tags{
+	color: #1b1b1b;
+	background-image: url("{% static 'Autospelleider/images/decTags.svg' %}");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+#tags h1 {
+	font-size: 2.8em;
+}
+
+#tags .left {
+	text-align: left;
+}
+
+#tags .right {
+	text-align: right;
+}
+
+#secondRow h3 {
+	font-weight: bold;
+	color: #9c2424;
+}
+
+#secondRow span {
+	color: black;
+}
+
+#secondRow > .row {
+	width: 100%;
+}
+
+.wie-collection {
+    padding: 0;
+    background:none:
+}
+
+.collection-item.avatar {
+    background: none;
+    border: 0;
+}
+
+.collapsible {
+    border: 0;
+}
+
+</style> <!-- style for over ons -->
+        <style>
+        #fourthRow a {
+            color: #9c2424;
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRow .tabs {
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRow .tabs .indicator {
+            background-color: #9c2424;
+        }
+        </style> <!-- style voor weerwolvenevent -->
+        <style>
+        #fourthRowContact a {
+            color: #9c2424;
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRowContact .tabs {
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRowContact .tabs .indicator {
+            background-color: #9c2424;
+        }
+        </style> <!-- style voor weerwolvenevent -->
+
+        <script>
+            $(document).on('submit','#new_reservation_form', function(e){
+                var action = $(this).val();
+                if(action != "finalsubmit"){
+                    e.preventDefault();
+                }
+            });
+        </script>
+
+    </head>
+    <body class="container">
+        <ul class="collapsible z-depth-0" data-collapsible="accordion">
+            <li>
+                <div class="row collapsible-header" id="header-inschrijven">
+                    <div class="col s12 m7 l5 push-m5 push-l7 header-div">
+                        <h4>Gegevens</h4>
+                    </div>
+                </div>
+                <div class="row collapsible-body">
+                    <form id="adjust_reservation_form" action="{% url 'Autospelleider:changeReservation' reservation_code %}" class="col s12 m12 l12" method="post">
+
+                        <div class="" id="form-step">
+                            <div class="col s12 m4 l3">
+                                <h5>Groepen aanpassen</h5>
+                                <p>
+                                    Je kan hier de groepen aanpassen!
+                                </p>
+                            </div>
+                            <div class="col s12 m8 l9">
+                                <h5>Reservatie {{ reservation.id }}</h5>
+                                <div class="row">
+                                  <div class="col s6 m3 l3">
+                                      Naam
+                                  </div>
+                                  <div class="col s0 m0 l4 hide-on-med-and-down">
+                                      E-mailadres
+                                  </div>
+                                  <div class="col s3 m3 l1 hide-on-small-only">
+                                        Leeftijd
+                                  </div>
+                                  <div class="col s3 m3 l2">
+                                      Groepscode
+                                  </div>
+                                  <div class="col s3 m3 l2">
+                                  </div>
+                                </div>
+                                {% for subscription, code in zipped %}
+                                <div class="row valign-wrapper">
+                                    <div class="col s6 m3 l3 valign">
+                                        {{ subscription.first_name }} {{ subscription.last_name }}
+                                    </div>
+                                    <div class="col s3 m3 l4 hide-on-med-and-down">
+                                        {{ subscription.email }}
+                                    </div>
+                                    <div class="col s3 m3 l1 hide-on-small-only">
+                                        {{ subscription.age }}
+                                    </div>
+                                    <div class="col s3 m3 l2 input-field">
+                                        <select class="custom-selected" id="custom-selected{{ forloop.counter }}">
+                                            <option value="noncustom{{ forloop.counter }}" selected>{{code}}</option>
+                                            <option value="custom{{ forloop.counter }}">Groep van vriend</option>
+                                        </select>
+                                    </div>
+                                    <div class="col s3 m3 l2 input-field active">
+                                        <input id="groepscode{{ forloop.counter }}" type="text" class="custom-code validate inschrijving hide">
+                                        <label class="custom-code hide" id="groepscodelabel{{ forloop.counter }}" for="groepscode{{ forloop.counter }}">
+                                            Groepscode
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col s2 m5 l5">
+                                    </div>
+                                    <div class="col s5 m2 l2 input-field center-align">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red" type="button" id="finalsubmit" value="finalsubmit" name="done">
+                                            <i class="material-icons">done</i>
+                                        </button>
+                                    </div>
+                                    <div class="col s2 m5 l5">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </body>
+
+</html>

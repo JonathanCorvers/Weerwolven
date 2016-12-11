@@ -1,0 +1,55 @@
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/navbar.css' %}">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/villages.css' %}">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/selectCharacters.css' %}">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="{% static 'Autospelleider/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/villages.js' %}"></script>
+
+      {% block css %}
+      {% endblock %}
+  </head>
+
+  <body>
+<div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Limburgse wolven</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><form action="{% url 'Autospelleider:setup' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Setup home" class="btn btn-info">
+            </form></li>
+      <li><form action="{% url 'Autospelleider:participants' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Bekijk deelnemers" class="btn btn-info">
+            </form></li>
+      <li><form action="{% url 'Autospelleider:villages' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Bekijk Dorpen" class="btn btn-info">
+            </form></li>
+    </ul>
+  </div>
+</nav>
+    </div>
+
+
+{% block jumbotron %}{% endblock %}
+{% block content %}{% endblock %}
+
+
+
+  </body>
+
+</html>

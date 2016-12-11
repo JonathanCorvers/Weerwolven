@@ -1,0 +1,23 @@
+﻿<a id="inschrijven"></a>
+
+<div class="container">
+    <div class="row" id="fifthRow">
+        <div class="col-md-12" id="inschrijvingUitlegCol">
+            <div id="inschrijvingUitleg">
+                <h3>Inschrijven</h3>
+                <p>
+                    Met behulp van het inschrijvingsformulier kan je jezelf of je groep van max. 10 personen inschrijven. Als je een groep van meer dan 10 wil inschrijven, laat ons dan iets weten via het contactformulier. We plaatsen maximaal 3 personen uit eenzelfde groep in hetzelfde dorp.<br>
+                    Je e-mailadres wordt enkel gebruikt om de betalingsgegevens door te sturen en om informatie over het event door te sturen. <br>
+                    We proberen ook onze dorpen zo gevarieerd mogelijk in te delen op basis van leeftijd en ervaring, daarom dat we dit ook vragen.
+                </p>
+            </div> <!-- inschrijvingsUitleg -->
+        </div> <!-- inschrijvingsUitlegcol -->
+
+        <div class="col-md-12 inschrijvingForm" id="inschrijvingForm1" 
+             data-ng-controller="InschrijfController as inschrijfCtrl">
+            <h3>Inschrijvingsformulier</h3>
+            <inschrijving-inschrijver-stap data-ng-show="inschrijfCtrl.stap == 1"></inschrijving-inschrijver-stap>
+            <inschrijving-extra-mensen-stap data-ng-show="inschrijfCtrl.stap == 2"></inschrijving-extra-mensen-stap>
+        </div> <!-- inschrijvingsForm1 -->
+    </div> <!-- fifthRow-->
+</div> <!-- container -->

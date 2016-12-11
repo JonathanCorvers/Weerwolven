@@ -1,0 +1,401 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" bgproperties="fixed">
+    <head>
+        <title>Limburgse Wolven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="{% static 'Autospelleider/materialize/css/materialize.min.css' %}">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="{% static 'Autospelleider/materialize/js/materialize.min.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script>
+
+        function eventFire(el, etype){
+          if (el.fireEvent) {
+            el.fireEvent('on' + etype);
+          } else {
+            var evObj = document.createEvent('Events');
+            evObj.initEvent(etype, true, false);
+            el.dispatchEvent(evObj);
+          }
+        }
+        var counter = 0;
+        var first_names = [];
+        var last_names = [];
+        var subscriptions = [];
+        var emails = [];
+        var ages = [];
+        var postdata = {};
+
+        function hasClass(element, cls) {
+            return ((' ' + element.classList + ' ').indexOf(' ' + cls + ' ') > -1);
+        }
+
+        function reloadDocument(){
+
+            $('#finalsubmit').prop('disabled', true);
+
+            $('select').material_select();
+            $('.carousel').carousel();
+            $('.collapsible').collapsible({
+                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+            });
+
+            function checkAllTheThings(){
+                var inputs, index;
+                var allvalid = 1;
+                var allvalidcontact = 1;
+
+                inputs = document.getElementsByTagName('input');
+                for (index = 0; index < inputs.length; index++) {
+                    if((hasClass(inputs[index], 'validate')) && (hasClass(inputs[index], 'inschrijving'))) {
+                        if(!(hasClass(inputs[index], 'valid'))) {
+                            allvalid = 0;
+                        }
+                    }
+
+                    if (!($(inputs[index]).val().length > 0)) { // Don't check against 0
+                        $(inputs[index]).removeClass('valid');
+                        $(inputs[index]).addClass('invalid');// If the input isn't ok
+                    }
+                }
+
+                var textareas = document.getElementsByTagName('textarea');
+                for (index = 0; index < textareas.length; index++) {
+                    if (!($(textareas[index]).val().length > 0)) { // Don't check against 0
+                        $(textareas[index]).removeClass('valid');
+                        $(textareas[index]).addClass('invalid');// If the input isn't ok
+                    } else {
+                        $(textareas[index]).removeClass('invalid');
+                        $(textareas[index]).addClass('valid');// If the input is ok
+                    }
+                }
+
+                var age = $('#leeftijd' + counter.toString()).val();
+                if(Number.isInteger(parseInt(age))) {
+                    $('#leeftijd' + counter.toString()).addClass('valid');
+                }
+                for (index = 1; index < inputs.length; index++) {
+                    if((hasClass(inputs[index], 'validate')) && (hasClass(inputs[index], 'contact'))) {
+                        if(!(hasClass(inputs[index], 'valid'))) {
+                            allvalidcontact = 0;
+                        }
+                    }
+                }
+
+                for (index = 0; index < textareas.length; index++) {
+                    if((hasClass(textareas[index], 'validate')) && (hasClass(textareas[index], 'contact'))) {
+                        if(!(hasClass(textareas[index], 'valid'))) {
+                            allvalidcontact = 0;
+                        }
+                    }
+                }
+
+                if(allvalid == 1) {
+                    $('#done').prop('disabled', false);
+                    $('#add').prop('disabled', false);
+                } else {
+                    $('#done').prop('disabled', true);
+                    $('#add').prop('disabled', true);
+                }
+                if(allvalidcontact == 1) {
+                    $('#done_contact').prop('disabled', false);
+                } else {
+                    $('#done_contact').prop('disabled', true);
+                }
+
+            }
+
+            $(document).on('keyup', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('keypress', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('keydown', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('change', function() {
+                checkAllTheThings();
+
+            });
+
+            $("input").each(function() {
+                $(this).on('input', function() {
+                    var this_id = this.id;
+                    checkAllTheThings();
+                    $(document.getElementById(this_id)).removeClass('invalid');
+                    $(document.getElementById(this_id)).valid();
+                    var noError = 1;
+                    if($(document.getElementById(this_id)).hasClass('error')) {
+                        noError = 0;
+                    }
+                    $(document.getElementById(this_id)).removeClass('error');
+                    $("label").each(function() {
+                        if($(this).hasClass('error')) {
+                            $(this).addClass('active');
+                        } else {
+                            if($(this).hasClass('active') && !noError) {
+                                $(this).addClass('hide');
+                            }
+                        }
+                        if(noError) {
+                            $(this).removeClass('hide');
+                        }
+                    });
+                });
+            });
+
+
+            var group = [0, 0, 0, 0];
+            var subs = subscriptions.length;
+
+            $('.submit').click(function() {
+
+                var action = $(this).val();
+
+                if(action=='finalsubmit') {
+                    subscriptions[subscriptions.length] = $('#first_name' + counter.toString()).val() + " " + $('#last_name' + counter.toString()).val();
+                    first_names[first_names.length] = $('#first_name' + counter.toString()).val();
+                    last_names[last_names.length] = $('#last_name' + counter.toString()).val();
+                    emails[emails.length] = $('#email' + counter.toString()).val();
+                    ages[ages.length] = $('#leeftijd' + counter.toString()).val().toString();
+
+                    if (!postdata['first_name' + counter.toString()]) {
+                        postdata['first_name' + counter.toString()] = [];
+                    }
+                    postdata['first_name' + counter.toString()].push($('#first_name' + counter.toString()).val());
+
+                    if (!postdata['last_name' + counter.toString()]) {
+                        postdata['last_name' + counter.toString()] = [];
+                    }
+                    postdata['last_name' + counter.toString()].push($('#last_name' + counter.toString()).val());
+
+                    if (!postdata['email' + counter.toString()]) {
+                        postdata['email' + counter.toString()] = [];
+                    }
+                    postdata['email' + counter.toString()].push($('#email' + counter.toString()).val());
+
+                    if (!postdata['leeftijd' + counter.toString()]) {
+                        postdata['leeftijd' + counter.toString()] = [];
+                    }
+                    postdata['leeftijd' + counter.toString()].push($('#leeftijd' + counter.toString()).val());
+
+                    if (!postdata['custom-selected' + counter.toString()]) {
+                        postdata['custom-selected' + counter.toString()] = [];
+                    }
+                    postdata['custom-selected' + counter.toString()].push("custom0");
+
+                    postdata['groepscode0'] = [];
+                    postdata['groepscode0'].push("b'" + "{{ group_code }}" + "'");
+
+                    var index;
+                    var subs = subscriptions.length;
+                    postdata['subs_amount'] = [];
+                    postdata['subs_amount'].push(subs.toString());
+
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    var csrftoken = getCookie('csrftoken');
+                    function csrfSafeMethod(method) {
+                        // these HTTP methods do not require CSRF protection
+                        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+                    $.ajaxSetup({
+                        beforeSend: function(xhr, settings) {
+                            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                            }
+                        }
+                    });
+                    var mydata = $.param(postdata);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'Autospelleider:createReservationCode' %}",
+                        data: {'mydata': mydata},
+                        success: function(data) {
+                            $('#form-step').html(data);
+                        }
+                    });
+                reloadDocument();
+                }
+            });
+        }
+        $(document).ready(function(){
+            reloadDocument();
+            eventFire(document.getElementById('header-inschrijven'), 'click');
+        });
+        </script>
+        <link rel="stylesheet" href="{% static 'Autospelleider/css/public.css' %}">
+        <style>
+            html {
+                min-height: 100vh;
+                background-image: url({% static 'Autospelleider/images/Sarah.png' %}), url({% static 'Autospelleider/images/bg_bos.jpg' %});
+                linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) );
+                background-position: left bottom, center center;
+                background-repeat: no-repeat, no-repeat, repeat-x;
+                background-size: auto 50vh, cover;
+                background-attachment: fixed, fixed;
+                animation: animatedPerson 1s ease-out;
+                animation-iteration-count: 1;
+                -ms-animation: animatedPerson 1s ease-out;
+                -ms-animation-iteration-count: 1;
+                -moz-animation: animatedPerson 1s ease-out;
+                -moz-animation-iteration-count: 1;
+                -webkit-animation: animatedPerson 1s ease-out;
+                -webkit-animation-iteration-count: 1;
+            }
+        </style>
+
+        <script>
+            $(document).on('submit','#new_reservation_form', function(e){
+                var action = $(this).val();
+                if(action != "finalsubmit"){
+                    e.preventDefault();
+                }
+            });
+        </script>
+
+    </head>
+    <body class="container">
+    <div class="row dark-background">
+        <ul>
+            <li>
+                <div class="row" id="header-inschrijven">
+                    <div class="col s12 m7 l5 header-div">
+                        <h4>Inschrijven</h4>
+                    </div>
+                </div>
+                <div class="row white-text">
+                    <form id="new_reservation_form" action="{% url 'Autospelleider:createReservation' %}" class="col s12 m12 l12" method="post">
+
+                        <div class="" id="form-step">
+                            {% if exists %}
+                            {% if full %}
+                            <div class="col s12 m12 l12">
+                                <h5>
+                                    Deze groep is al vol!
+                                </h5>
+                                                   <div class="progress">
+                                                        <div id="progress-to-refresh" class="determinate" style="width: 100%"></div>
+                                                    </div>
+                                 <script>
+                                 function refresh() {
+                                    window.location.href = "http://localhost:8000";
+                                 }
+                                 setTimeout(refresh, 10000);
+                                 </script>
+                            </div>
+                            {% else %}
+                            <div class="col s12 m6 l4">
+                                <h5>Stap</h5>
+                                <p>
+                                    Vul de gegevens in van de persoon die je aan deze groep wilt toevoegen. De betalingsgevens worden gestuurd naar het e-mailadres dat je hier opgeeft.
+                                </p>
+                                <p>
+                                    Velden met * zijn verplicht.
+                                </p>
+                            </div>
+                            <div class="col s12 m6 l8">
+                                <h5>Formulier</h5>
+                                <div class="row">
+                                      <div class="row">
+                                        <div class="input-field col s6">
+                                          <input id="first_name0" type="text" class="validate invalid inschrijving">
+                                          <label for="first_name0">Voornaam*</label>
+                                        </div>
+                                        <div class="input-field col s6">
+                                          <input id="last_name0" type="text" class="validate invalid inschrijving">
+                                          <label for="last_name0">Achternaam*</label>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="input-field col s12">
+                                          <input id="email0" type="email" class="validate invalid inschrijving">
+                                          <label for="email0">Email*</label>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="input-field col s12 m6 l6">
+                                          <input id="leeftijd0" type="number" class="validate invalid inschrijving">
+                                          <label for="leeftijd0">Leeftijd*</label>
+                                        </div>
+                                        <div class="input-field col s6 m3 l3">
+                                        </div>
+                                        <div class="input-field col s6 m3 l3">
+                                            <button class="submit btn-floating btn-large waves-effect waves-light red left" type="button" id="finalsubmit" value="finalsubmit" name="done">
+                                                <i class="material-icons">done</i>
+                                            </button>
+                                        </div>
+                                      </div>
+
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="col s12 m12 l12">
+                                <h4>
+                                    Deze groep bestaat niet!
+                                </h4>
+                                                   <div class="progress">
+                                                        <div id="progress-to-refresh" class="determinate" style="width: 100%"></div>
+                                                    </div>
+                                 <script>
+                                 function refresh() {
+                                    window.location.href = "http://jonathancorvers.pythonanywhere.com";
+                                 }
+                                 setTimeout(refresh, 10000);
+                                 </script>
+                                <style>
+                                     /* The animation code */
+                                    @keyframes progress_to_refresh {
+                                        from {width: 0%;}
+                                        to {width: 100%;}
+                                    }
+
+                                    /* The element to apply the animation to */
+                                    #progress-to-refresh {
+                                        animation-name: progress_to_refresh;
+                                        animation-duration: 10s;
+                                    }
+
+                                    #issues {
+                                        margin-bottom: 5%;
+                                    }
+                                </style>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+    </body>
+
+</html>

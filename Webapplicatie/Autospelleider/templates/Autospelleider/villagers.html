@@ -1,0 +1,38 @@
+
+{% extends "Autospelleider/navbar.html" %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>{{ village.village_name }}</h1>
+    <p><form action="{% url 'Autospelleider:maakInwoners' village.village_name %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="maakInwoners" class="btn btn-info">
+            </form></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Inwoners {{ village.village_name }}</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>Rol</th>
+        <th>placeholder</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for villager in village.villager_set.all %}
+      <tr>
+        <td>{{ villager.participant.first_name }} {{ villager.participant.last_name }}</td>
+        <td>{{ villager.role }}</td>
+        <td>placeholder</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

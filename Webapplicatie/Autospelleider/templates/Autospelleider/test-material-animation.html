@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" bgproperties="fixed">
+    <head>
+        <title>Limburgse Wolven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#9c2424">
+        <link rel="icon" sizes="192x192" href="{% static 'Autospelleider/images/Logoklein.png' %}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="{% static 'Autospelleider/materialize/css/materialize.min.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="{% static 'Autospelleider/materialize/js/materialize.min.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script src="{% static 'Autospelleider/js/prefixfree.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/material-animation-classes.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/material-animation.js' %}"></script>
+		<script>
+		    var fd = 1/60;
+		    var pointLight1 = new PointLightSource(0,0,200,0.5);
+		    var pointLight2 = new PointLightSource(-100,0,200,0.5);
+			var div = new MaterialDiv("inherit", "auto", 100, 100, 10, 0, 0, 0, "blue", "120px", "120px", "testsquare", "circle");
+			window.onload = function() {
+			    document.getElementById('stage').appendChild(div.div);
+                updateFaces();
+			    window.setTimeout(updateFaces(), 2000);
+			    window.setTimeout(constructShadows(), 2000);
+			}
+		</script>
+		<style>
+			.circle, .ellipse {
+			    border-radius: 50%;
+			}
+		</style>
+        <style>
+            html, body {
+              height: 100%;
+            }
+            body {
+            }
+            .threedee {
+              position: absolute;
+              transform-style: preserve-3d;
+              transform-origin: 50% 50% 50%;
+              backface-visibility: hidden;
+            }
+            .assembly {
+              animation: spin 4s linear infinite;
+            }
+            #box-toggle:checked ~ .assembly .face {
+              outline: 1px solid #000;
+              background: #fff !important;
+              backface-visibility: visible;
+            }
+            @keyframes spin {
+              to {
+                transform: rotateY(360deg) rotateZ(360deg) rotateX(720deg);
+              }
+            }
+        </style>
+    </head>
+    <body class="container">
+        <div class="row">
+            <div id="stage" class="col s12 m6 l1">
+
+            </div>
+        </div>
+    <script>
+
+			$(document).ready(function(){
+			});
+    </script>
+
+    </body>
+</html>

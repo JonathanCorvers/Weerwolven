@@ -1,0 +1,65 @@
+﻿<form role="form" name="inschrijvingsFormExtra" novalidate>
+    <div data-ng-repeat="persoon in inschrijfCtrl.reservatie.personen">
+        <div data-ng-hide="$index == 0" 
+             class="form-group">
+            <div class="row">
+                <div class="col-lg-5">
+                    <label>Voornaam + Familienaam</label>
+                    <div>
+                        <input type="text" class="form-control" id="if_naam" name="if_naam"
+                               data-ng-model="persoon.naam"
+                               required minlength="2" />
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <label>E-mailadres</label>
+                    <input type="email" class="form-control" name="if_email"
+                           data-ng-model="persoon.email"
+                           required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-5">
+                    <label>Leeftijd</label>
+                    <input type="number" class="form-control" name="if_leeftijd"
+                           data-ng-model="persoon.leeftijd"
+                           required min="15" />
+                </div>
+                <div class="col-lg-7">
+                    <label>Hoeveel keer heb je al geweerwolfd?</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="if_ervaring" value="0"
+                                   data-ng-model="persoon.ervaring"
+                                   data-ng-required="!persoon.ervaring">0</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="if_ervaring" value="1-2"
+                                   data-ng-model="persoon.ervaring"
+                                   data-ng-required="!persoon.ervaring">1-2</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="if_ervaring" value="3-4"
+                                   data-ng-model="persoon.ervaring"
+                                   data-ng-required="!persoon.ervaring">3-4</input>
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="if_ervaring" value="5+"
+                                   data-ng-model="persoon.ervaring"
+                                   data-ng-required="!persoon.ervaring">5+</input>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="btnKlaar" class="btn btn-wolf"
+            data-ng-click="inschrijfCtrl.inschrijven();"
+            data-ng-disabled="inschrijvingsFormExtra.$invalid"
+            data-ng-hide="inschrijfCtrl.reservatie.aantalMensen != 0 && inschrijfCtrl.stap != 2">
+        Inschrijven
+    </button>
+    <div class="row">
+        <span data-ng-show="inschrijfCtrl.progress">Even geduld, de inschrijving wordt verwerkt.</span>
+    </div>
+</form>

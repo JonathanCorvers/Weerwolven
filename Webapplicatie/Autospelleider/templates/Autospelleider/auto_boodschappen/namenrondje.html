@@ -1,0 +1,126 @@
+{% extends "Autospelleider/auto_boodschappen/spelleider_interface_auto_m.html" %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+
+var counter = 0;
+
+// reset
+$("#reset").click(function(){
+{% for villager in villagers_list %}
+    $('#button{{ forloop.counter }}').attr("value", "{{ villager.participant.first_name }}");
+    $('#buttonLabel{{ forloop.counter }}').removeClass("active");
+    $("#form1")[0].reset();
+    counter = 0;
+    $('#continueButton').addClass("disabled");
+{% endfor %}
+});
+
+{% for villager in villagers_list %}
+clicked{{ forloop.counter }} = 0;
+$("#buttonLabel{{ forloop.counter }}").click(function(){
+if(clicked{{ forloop.counter }} == 0){
+    if(counter < 10) {
+    $('#button{{ forloop.counter }}').attr("value","0" + counter.toString() + "{{ villager.participant.first_name }}");
+    }
+        else{
+    $('#button{{ forloop.counter }}').attr("value", counter.toString() + "{{ villager.participant.first_name }}");
+    }
+    counter = counter + 1;
+    clicked{{ forloop.counter }} = 1;
+   }
+else {
+    clicked{{ forloop.counter }} = 0;
+    counter = counter-1;
+    $('#button{{ forloop.counter }}').attr("value", "{{ villager.participant.first_name }}");
+}
+if (counter == {{ villagers_amount }}){
+$('#continueButton').removeClass("disabled");
+}
+});
+{% endfor %}
+});
+
+$('form').submit(function(e){
+    e.preventDefault()
+    var $this = $(this)
+    $.ajax({
+       post: $this.attr('seats'),
+       data: seat
+    })
+})
+</script>
+{% endblock %}
+
+{% block css %}
+{% for degree in degrees %}
+           #badge{{ forloop.counter }} {
+            transform-origin: center right;
+            transform: rotate({{ degree }}deg);
+          }
+
+          #button{{ forloop.counter }}, #buttonLabel{{ forloop.counter }} {
+            width: 60%;
+            opacity: 1;
+            position: absolute;
+            left: 0;
+            {% if degree > 180 %}
+            {% if degree <= 360 %}
+            transform-origin: center center;
+            transform: rotate(30deg);
+            {% endif %}
+            {% endif %}
+            {% if degree <= 180 %}
+            transform-origin: center center;
+            transform: rotate(210deg);
+            {% endif %}
+            z-index:100;
+            cursor: pointer;
+            }
+          {% endfor %}
+
+.see-through {
+    opacity: 0;
+    visibility: hidden;
+}
+
+{% endblock %}
+
+{% block startform %}
+                            <form id="form1" action="{% url 'Autospelleider:orderSeats' village.village_name %}" method="POST">
+                                {% csrf_token %}
+{% endblock %}
+
+{% block villager_action_buttons %}
+                                {% for villager in villagers_list %}
+                                    <div class="badge" id="badge{{ forloop.counter }}">
+                                        <!--<div class="rotated-form" data-toggle="buttons">-->
+
+                                            <input name="checks" type="checkbox" id="button{{ forloop.counter }}" value="{{ villager.participant.first_name }}" class="btn rotated-btn see-through">
+                                            <label id="buttonLabel{{ forloop.counter }}" for="button{{ forloop.counter }}" class="btn">
+                                        {{ villager.participant.first_name }}
+                                            </label>
+                                        <!--</div>-->
+                                    </div>
+                                    {% endfor %}
+{% endblock %}
+
+{% block spelfase_kort %}Namenrondje{% endblock %}
+
+{% block spelfase_card_title %}Namenrondje{% endblock %}
+
+{% block spelfase_card_explanation %}
+                                Nu gaan we een namenrondje doen. Vraag met de klok mee iedereen om zich even voor te stellen en klik gewoon in die volgorde op de namen. Dan kan ik ze vanaf nu ook in die volgorde aan jou tonen.
+                                <br>Tijdens een namenrondje worden de namen altijd alfabetisch getoond, startend vanaf links (9 uur).
+                                <br>Je moet wel iedereen een keer hebben aangeduid!
+{% endblock %}
+
+{% block extra_buttons %}
+                                <div id="reset" class="btn btn-warning btn-lg">Reset</div>
+                                <input type="submit" id="continueButton" value="OK" class="disabled btn btn-lg btn-info"/>
+{% endblock %}
+
+{% block endform %}
+                                </form>
+{% endblock %}

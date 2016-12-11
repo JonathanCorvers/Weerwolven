@@ -1,0 +1,62 @@
+{% extends "Autospelleider/auto_boodschappen/spelleider_interface_auto_m.html" %}
+
+{% block js %}
+ {% endblock %}
+       {% block css %}
+       {% endblock %}
+
+{% block startform %}
+<!-- Voor wanneer de cirkel van inwoners een form moet zijn -->
+{% endblock %}
+
+{% block villager_action_buttons %}
+                            {% for villager in villagers_list %}
+                            <div class="badge" id="badge{{ forloop.counter }}">
+                                <div class="rotated-form" action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name participant_ID=villager.participant.participant_ID %}" method="post">
+                                    {% csrf_token %}
+                                    <button id="button{{ forloop.counter }}" data-target="modal{{ forloop.counter }}" class="btn btn-info rotated-btn waves-effect waves-light modal-trigger levend{{ villager.alive }}">{{ villager.participant.first_name }}</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+{% endblock %}
+
+{% block spelfase_kort %}Hier komt altijd een benaming van de huidige spelfase{% endblock %}
+
+{% block spelfase_card_title %}Hier komt de titel van de spelfase{% endblock %}
+{% block spelfase_card_explanation %}Hier volgt de meer uitgebreide uitleg{% endblock %}
+
+
+{% block villager_action_buttons_modals %}
+{% if seat %}
+    {% for villager in villagers_list %}
+          <div id="modal{{ forloop.counter }}" class="teal modal card">
+              <div class="card-content">
+            <div class="modal-content">
+              <h4>{{ villager.participant.first_name }}</h4>
+              <p>{{ villager.role }}</p>
+            </div>
+            <div class="modal-footer teal">
+                {% if villager.alive %}
+                <a href="#!" class=" modal-action modal-close waves-effect waves-light btn-flat">Maak dood</a>
+                {% else %}
+                <a href="#!" class=" modal-action modal-close waves-effect waves-light btn-flat">Maak levend</a>
+                {% endif %}
+                <a href="#!" class=" modal-action modal-close waves-effect waves-light btn-flat">Verander rol</a>
+                <a href="#!" class="activator modal-action waves-effect waves-light btn-flat">Verlaat dorp</a>
+            </div>
+              </div>
+              <div class="card-reveal teal">
+                  <span class="card-title">Naar welk dorp wil je {{ villager.participant.first_name }} sturen?<i class="material-icons right">call_received</i></span>
+                  <div class="modal-content">
+                  </div>
+                  <div class="modal-footer teal">
+                      {% for newvillage in villages_list %}
+                        <a href="{% url 'Autospelleider:leaveVillage' village_name=villager.village.village_name new_village_name=newvillage.village_name seat=villager.seat %}" class=" modal-action modal-close waves-effect waves-light btn-flat">{{ newvillage.village_name }}</a>
+                      {% endfor %}
+                  </div>
+              </div>
+          </div>
+    {% endfor %}
+{% endif %}
+    {%endblock %}
+

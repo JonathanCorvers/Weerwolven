@@ -1,0 +1,480 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      {% if timerOnBool %}
+      <!--<meta http-equiv="refresh" content="{{ time_left }}; URL={% url 'Autospelleider:spelleiderInterface' village.village_name %}">-->
+      {% endif %}
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/navbar.css' %}">
+     <!--<link rel="stylesheet" href="{% static 'Autospelleider/css/jquery.countdown.css' %}">-->
+      <script src="{% static 'Autospelleider/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+      {% if timerOnBool %}
+      <script>
+      $(document).ready(function() {
+
+          // place this within dom ready function
+          function stoptimer(){
+            $('#timerAnimation').css('animation-play-state', 'paused');
+            $('#timerAnimationWrap').css('animation-play-state', 'paused');
+            }
+
+         // use setTimeout() to execute
+         setTimeout(stoptimer, {{ milliseconds_left }})
+
+        });
+        $(function () {
+	    var austDay = new Date($.now());
+	    austDay.setSeconds(austDay.getSeconds() +{{ time_left.seconds}});
+	    if ({{ time_left.seconds }} > 60) {
+	        $('#defaultCountdown').countdown({until: austDay, layout: '{mn}\'{snn}\"'});
+	    }
+	    else {
+	        $('#defaultCountdown').countdown({until: austDay, layout: '{snn}\"'});
+	    }
+        });
+
+
+
+      </script>
+      {% endif %}
+      {% block javascript %}
+      {% endblock %}
+      <style>
+
+        #reset{
+        position: absolute;
+        bottom: 5%;
+        transform-origin: center center;
+        transform: translateX(-50%);
+        }
+
+      #autoText {
+      height: 46%;
+      width: 46%;
+      background: blue;
+      margin: 0;
+      border-radius: 50%;
+      transform-origin: center center;
+      transform: translateX(43.478260869%) /*{% if not timerOnBool %}translateX(15.217391304%){% endif %}*/;
+      text-align: center;
+      line-height: 120%;
+      overflow:hidden;
+      padding: 1%;
+      font-size: 12pt;
+      color: white;
+      font-weight: 550;
+      vertical-align: middle;
+        background: #5bc0de; /* For browsers that do not support gradients */
+          background: -webkit-radial-gradient(#5bc0de, #5bc0de, #add8e6); /* Safari 5.1 to 6.0 */
+          background: -o-radial-gradient(#5bc0de, #5bc0de, #add8e6); /* For Opera 11.6 to 12.0 */
+          background: -moz-radial-gradient(#5bc0de, #5bc0de, #add8e6); /* For Firefox 3.6 to 15 */
+          background: radial-gradient(#5bc0de, #5bc0de, #add8e6); /* Standard syntax */
+      }
+
+      #autoTextSpan {
+      height: 100%;
+      width: 100%;
+      max-height: 100%;
+      min-height: 100%;
+      position: inherit;
+      margin: 0;
+    vertical-align: middle;
+    align-items: center;
+        }
+
+
+
+      #timerAnimationWrap {
+        width:100%;
+        height:100%;
+        padding: 0;
+        transform-origin:428.571428571% center;
+        position:relative;
+        {% if timerOnBool %}
+        animation:rotate 60s linear infinite;
+        {% endif %}
+        }
+
+        #timerAnimationWrapWrap {
+        position:relative;
+        width:7%;
+        height:7%;
+        left: 20%;
+        padding: 0;
+        transform-origin:428.571428571% center;
+        transform: rotate({{ neg_start_rotation }}deg);
+        }
+
+      #timerAnimation {
+      content:'';
+      position:absolute;
+      z-index: 4;
+      height:100%;
+      width:100%;
+      border-radius: 50%;
+      overflow: hidden;
+      padding: 0;
+      background-color: #5bc0de;
+      {% if timerOnBool %}
+      animation:rotate 60s linear reverse infinite;
+      {% endif %}
+        display: flex;
+        vertical-align: middle;
+        text-align: center;
+      }
+      @keyframes rotate { 100% { transform:rotate(-360deg); } }
+
+        #continueButton {
+        border-radius: 50%;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        transform-origin:center center;
+        transform: rotate({{ start_rotation }}deg);
+        }
+
+      .vertical-center {
+          min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+          min-height: 100vh; /* These two lines are counted as one :-)       */
+
+          display: flex;
+          align-items: center;
+        }
+
+
+      .overflow-hidden {
+        overflow: hidden;
+        }
+
+        .pull-right {
+            float: right !important;
+            }
+
+          html {
+            height: 100vh;
+            width: 100vw;
+            padding:0;
+            margin:0;
+        overflow: hidden;
+            }
+
+           body {
+            height: inherit;
+            width: inherit;
+            padding:0;
+            margin:0;
+        overflow: hidden;
+            }
+
+           nav {
+            height: 5vh;
+            z-index: 50;
+            background-color:rgba(240, 240, 240, 1);
+            }
+
+            #navbar-headerContainer{
+            background-color:rgba(240, 240, 240, 1);
+            }
+
+          #circleRow {
+            position: relative;
+            }
+
+          #villagersCircle {
+            position: relative;
+            margin: 0 auto;
+            height: 85vh;
+            width: 85vh;
+            border-radius: 50%;
+            background: lightblue;
+            display: flex;
+            align-items: center;
+            padding:0;
+          }
+
+          .badge {
+            width: 50%;
+            position: absolute;
+            margin: 0em auto;
+            transform: translateY(-50%) translateX(-50%);
+            background-color:rgba(0, 0, 0, 0);
+            display: flex;
+            align-items: center;
+            padding: 0;
+            }
+
+            .rotated-form {
+            width: 40%;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            margin-top: 0em;
+            }
+
+           {% for degree in degrees %}
+           #badge{{ forloop.counter }} {
+            transform-origin: center right;
+            transform: rotate({{ degree }}deg);
+          }
+
+          #button{{ forloop.counter }} {
+            width: 40%;
+            opacity: 1;
+            position: absolute;
+            left: 0;
+            {% if degree > 90 %}
+            {% if degree <= 270 %}
+            transform-origin: center center;
+            transform: rotate(180deg);
+            {% endif %}
+            {% endif %}
+            z-index:3;
+            cursor: pointer;
+            }
+
+          #buttonLabel{{ forloop.counter }} {
+            overflow: hidden;
+            {% if degree > 90 %}
+            {% if degree <= 270 %}
+            transform-origin: center center;
+            transform: rotate(180deg);
+            {% endif %}
+            {% endif %}
+          }
+          {% endfor %}
+
+          #timerFormContainer {
+            position: relative;
+          }
+
+          .timerRow {
+            margin: 0 auto;
+            position: relative;
+          }
+
+          #troubleRow {
+            z-index: -1;
+            }
+
+          #timerForm {
+            margin: auto;
+          }
+
+          .timerFormCol {
+            margin:0 auto;
+            position: relative;
+            text-align: center;
+          }
+
+          #buttonTimer, #timerMinutes, #defaultCountdown{
+            margin:0 auto;
+            position: relative;
+            text-align: center;
+            z-index: 4;
+          }
+
+
+        #defaultCountdown {
+            vertical-align: middle;
+            text-align: center;
+            height: 100%;
+            align-items: stretch;
+            margin: auto auto;
+            display:inline-block;
+            transform-origin: center center;
+            color: white;
+            font-size: 2vh;
+            font-weight: bold;
+        transform-origin:center center;
+        transform: rotate({{ start_rotation }}deg) translateY(25%);
+        }
+
+          #overlayContainerTimer {
+            position: absolute;
+            top: 0;
+            width: inherit;
+          }
+
+          {% if overlayBool %}
+          #overlayContainer {
+            position: absolute;
+            top: 0;
+            z-index: 10;
+            width: inherit;
+          }
+
+          #visible-overlay {
+          background: lightblue;
+          padding-bottom: 10px;
+          }
+
+          #exitOverlayButton {
+            background: lightblue;
+            border-color: lightblue;
+          }
+
+          #overlayTitle {
+            color: white;
+            }
+
+          .actionButtonsContainer {
+          padding-top: 5px;
+          padding-bottom: 5px;
+          }
+
+          .actionButtonCol form{
+          width: 100%;
+          }
+
+          .actionButtonCol form .btn{
+          width: inherit;
+          }
+
+          #cover{
+          position: absolute;
+          top:0;
+          left:0;
+          bottom: 0;
+          right: 0;
+          background:rgba(0,0,0,0.6);
+          z-index:5;
+          width:inherit;
+          height:inherit;
+          }
+           {% endif %}
+      </style>
+  </head>
+
+  <body>
+<div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid" id="navbar-headerContainer">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Limburgse Wolven</a>
+    </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+    <ul class="nav navbar-nav">
+      <li><form action="{% url 'Autospelleider:setup' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Setup home" class="btn btn-info">
+            </form></li>
+      <li><form action="{% url 'Autospelleider:participants' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Bekijk deelnemers" class="btn btn-info">
+            </form></li>
+      <li><form action="{% url 'Autospelleider:villages' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Bekijk Dorpen" class="btn btn-info">
+            </form></li>
+    </ul>
+          </div>
+  </div>
+</nav>
+    </div> <!--navbar-->
+
+
+
+    <div class="container-fluid" id="circleRowContainer">
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8">
+                <div class="row" id="circleRow">
+                    <div class="col-lg-12">
+                        {% block spelleider_auto_boodschap %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2"></div>
+        </div>
+    </div>
+
+
+
+  {% if overlayBool %}
+    <div class="container-fluid" id="overlayContainer">
+        <div class="row vertical-center overflow-hidden">
+            <div class="col-lg-4">
+            </div>
+            <div class="col-lg-4" id="visible-overlay">
+                <div class="row" id="overlayHeaderRow">
+                    <div class="col-lg-11" id="overlayTitleContainer">
+                                <h3 id="overlayTitle">{{ villager.participant.first_name }} {{ villager.participant.last_name }}</h3>
+                            </div>
+                    <div class="col-lg-1">
+                        <form class="pull-right" action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" id="exitOverlayButton" value="X" class="btn btn-info btn-sm"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="actionButtonsContainer row">
+                        {% if villager.alive %}
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="makeDead" value="Maak dood" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="changeRole" value="Verander rol" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="makeAlive" value="Maak levend" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="changeRole" value="Verander rol" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                <div class="actionButtonsContainer row">
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="makeLeave" value="Verlaat dorp" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                        <div class="col-lg-6 actionButtonCol">
+                            <form action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" id="showInfo" value="Bekijk info" class="btn btn-info btn-sm"/>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-lg-4">
+                </div>
+        </div>
+    </div>
+    <div id="cover">
+        </div>
+    {% endif %}
+
+  </body>
+
+</html>

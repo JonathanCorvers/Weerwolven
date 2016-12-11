@@ -1,0 +1,36 @@
+{% extends "Autospelleider/auto_boodschappen/spelleider_interface_auto_m.html" %}
+
+{% load static %}
+{% csrf_token %}
+
+       {% block js %}
+       {% endblock %}
+       {% block css %}
+       {% endblock %}
+                        {% block startform %}{% endblock %}
+                            {% block villager_action_buttons %}
+                            <div class="badge" id="badge{{ forloop.counter }}">
+                                <div class="rotated-form">
+                                    {% csrf_token %}
+                                    <button id="button{{ forloop.counter }}" class="btn btn-info rotated-btn waves-effect waves-light levend{{ villager.alive }}">{{ villager.participant.first_name }}</button>
+                                </div>
+                            </div>
+                            {% endblock %}
+                            {% block spelfase_kort %}
+Welkom! Klik op meer info.
+                            {% endblock %}
+                                    {% block extra_buttons %}
+                                    {% endblock %}
+                            {% block spelfase_card_title %}Start{% endblock %}
+                                {% block spelfase_card_explanation %}Jonathan hier, ik ga proberen in jouw plaats na te denken! Eens zien of het lukt.
+<br> In de volgende schermen zal ik hier steeds meer info geven, zodat je weet wat te doen.
+<br> Je kan deze overlappende laag weer omlaag doen schuiven door erop te klikken.
+<br> Rechtsboven zullen er notificaties binnenkomen, soms met extra info over wat er in de andere dorpen gebeurt, soms kan je er echt mee interageren. Je kan er altijd op klikken zodat ze groter worden en meer info tonen.
+<br> In geval van notificaties die om een handeling vragen, niet panikeren over of je er eentje mist. Noodzakelijke handelingen die voor een bepaalde tijd moeten gebeuren zal ik je sowieso op gegeven moment laten doen.
+<br> In de onderliggende cirkel zullen rond de kleinere donkere cirkel namen gaan verschijnen. Deze verschijnen nu echter nog niet, eerst hebben we nog wat voorbereidingswerk te doen.
+<br> Geen zorgen, ik ben erbij voor elk klein stapje en elk detail.
+<br> <a href="{% url 'Autospelleider:spelleiderInterfaceAuto' village_name=village.village_name auto_boodschap='voorbereiding_rollen'  %}"><button class="btn waves-effect waves-light">Verder</button> </a>{% endblock %}
+                        {% block endform %}{% endblock %}
+    {% block villager_action_buttons_modals %}
+    {%endblock %}
+

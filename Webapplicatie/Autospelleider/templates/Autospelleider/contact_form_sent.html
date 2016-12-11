@@ -1,0 +1,32 @@
+                <div class="row">
+                    <div class="col s12 m6 l6 push-m3 push-l3">
+                        <h5>Je mail is verstuurd!</h5>
+                    </div>
+                    <div class="progress row">
+                        <div id="progress-to-refresh" class="determinate" style="width: 100%"></div>
+                    </div>
+                </div>
+
+ <script>
+ function refresh() {
+    window.location.href = "http://jonathancorvers.pythonanywhere.com";
+ }
+ setTimeout(refresh, 10000);
+ </script>
+<style>
+     /* The animation code */
+    @keyframes progress_to_refresh {
+        from {width: 0%;}
+        to {width: 100%;}
+    }
+
+    /* The element to apply the animation to */
+    #progress-to-refresh {
+        animation-name: progress_to_refresh;
+        animation-duration: 10s;
+    }
+
+    #issues {
+        margin-bottom: 5%;
+    }
+</style>

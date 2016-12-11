@@ -1,0 +1,137 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'Autospelleider/css/styles.css' %}">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="{% static 'Autospelleider/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'Autospelleider/js/villages.js' %}"></script>
+  </head>
+
+  <body>
+
+  <div id="navbarIndexTop" class="navbar navbar-inverse navbar-fixed-top" data-ng-controller="NavbarController" data-ng-init="isCollapsed = true">
+    <div class="container">
+        <img class="logoKlein hidden-xs" type =image/png src="{% static 'Autospelleider/images/grayscaleLogo.png' %}" height="50px" width="auto" />
+        <img class="logoKlein visible-xs-* hidden-sm hidden-md hidden-lg" src="{% static 'Autospelleider/images/Logoklein.png' %}" height="50px" width="auto" />
+        <button class="navbar-toggle" data-ng-click="isCollapsed = !isCollapsed">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+        <div class="collapse navbar-collapse navHeader" collapse="isCollapsed" data-ng-click="isCollapsed = true">
+            <ul class="nav navbar-nav navbar-right">
+                <li id="menuRef1"><a data-ng-click="scrollCtrl.scrollToAnchor(0)">Over ons</a></li>
+                <li id="menuRef2"><a data-ng-click="scrollCtrl.scrollToAnchor(1)">Weerwolvenevent</a></li>
+                <li id="menuRef3"><a data-ng-click="scrollCtrl.scrollToAnchor(2)">Inschrijven</a></li>
+                <li id="menuRef4"><a data-ng-click="scrollCtrl.scrollToAnchor(3)">Contact</a></li>
+            </ul>
+        </div> <!-- collapse -->
+    </div> <!-- navbar -->
+</div> <!-- container -->
+
+  <div class="container">
+      <div class="row">
+          <div class="col-md-3">
+                <div>
+                    <div class="row">
+                        <img src="{% static 'Autospelleider/images/logo.png' %}" width="100%" />
+                    </div>
+                </div>
+                <div>
+                    <div class="row">
+                        <em><h1 class="left">Voor zij die gebeten zijn </h1><h1 class="right">door weerwolven</h1></em>
+                    </div>
+                </div>
+          </div>
+      </div>
+  </div>
+
+  <a id="overOns"></a>
+<div class="container">
+    <div class="row" id="firstRow">
+        <div id="logoTopContainer">
+            <div class="col-md-6" id="logoTop">
+                <img src="{% static 'Autospelleider/images/logo.png' %}" width="100%" />
+            </div>
+        </div>
+        <div id="tagsContainer">
+            <div class="col-md-6" id="tags">
+                <em><h1 class="left">Voor zij die gebeten zijn </h1><h1 class="right">door weerwolven</h1></em>
+            </div>
+        </div>
+    </div> <!-- row -->
+</div> <!-- container -->
+
+<div class="container">
+    <div class="row" id="secondRow">
+        <div class="col-md-6  col-middle" id="Wie">
+            <h3>Wie we zijn</h3>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="wieIm">
+                        <img class="wieImg" src="https://lh5.googleusercontent.com/-10dSAOX5o7o/AAAAAAAAAAI/AAAAAAAAABE/yPV-utIZC34/s120-c/photo.jpg" />
+                    </div> <!-- wieIm -->
+
+                    <div class="wieDescr">
+                        <h4>Sarah Hendrickx</h4>
+                        <h5>Voorzitter</h5>
+                    </div> <!-- wieDescr -->
+                </div> <!-- column -->
+
+                <div class="col-sm-6">
+                    <div class="wieIm">
+                        <img class="wieImg" src="https://lh4.googleusercontent.com/-yhAH293EZd0/AAAAAAAAAAI/AAAAAAAAAP4/M85AMoNFgjI/s120-c/photo.jpg" />
+                    </div> <!-- wieIm -->
+
+                    <div class="wieDescr">
+                        <h4>Sara Briers</h4>
+                        <h5>Notulist</h5>
+                    </div> <!-- wieDescr -->
+                </div> <!-- column -->
+            </div> <!-- row -->
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="wieIm">
+                        <img class="wieImg" src="https://lh5.googleusercontent.com/-DUYJhhzf8eg/AAAAAAAAAAI/AAAAAAAAGH4/U-uKvcXJDx8/s120-c/photo.jpg" />
+                    </div> <!-- wieIm -->
+
+                    <div class="wieDescr">
+                        <h4>Jonathan Corvers</h4>
+                        <h5>Penningmeester</h5>
+                    </div> <!-- wieDescr -->
+                </div> <!-- column -->
+
+                <div class="col-sm-6">
+                    <div class="wieIm">
+                        <img class="wieImg" src="https://lh4.googleusercontent.com/-G_ivVEn8mbA/AAAAAAAAAAI/AAAAAAAAADw/iQn6A7-_86E/s120-c/photo.jpg" />
+                    </div> <!-- wieIm -->
+
+                    <div class="wieDescr">
+                        <h4>Nikki Corvers</h4>
+                        <h5>Webmaster</h5>
+                    </div> <!-- wieDescr -->
+                </div> <!-- column -->
+            </div> <!-- row -->
+        </div> <!-- column -->
+
+        <div class="col-md-6  col-middle" id="Wat">
+            <h3>Wat we doen</h3>
+            <p>
+                De Limburgse Wolven willen graag evenementen organiseren waar we op grote schaal 'Weerwolven van Wakkerdam' en varianten spelen. Op deze manier kunnen we zowel nieuwe spelers warm maken voor het weerwolvenspel, als weerwolvenfans verrassen met een andere manier van spelen. Zeker niet minder belangrijk willen we mensen van alle leeftijden de kans geven om in een ontspannen sfeer nieuwe mensen te leren kennen.
+            </p>
+        </div> <!-- column -->
+    </div> <!-- secondrow -->
+</div> <!-- container -->
+
+
+  </body>
+
+</html>

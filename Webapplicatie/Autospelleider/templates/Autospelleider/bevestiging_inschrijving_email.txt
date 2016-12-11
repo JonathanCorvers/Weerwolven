@@ -1,0 +1,24 @@
+Beste {{ main_subscriber.first_name }}
+
+Deze mail is deel van een testversie van de website en dient louter als voorbeeld.
+Bedankt voor je inschrijving! Via onderstaande link kan je de gegevens van je inschrijving nog eens bekijken en de verdeling in groepen aanpassen:
+jonathancorvers.pythonanywhere.com/inschrijving/bekijken/{{ reservation_code }}
+Deel deze link niet met iemand die je inschrijving niet mag aanpassen!
+
+
+Deel de link of de code van een groep zodat je vrienden zich bij ke kunnen inschrijven!</h5></caption>
+{% for group in reservation.groupsubscription_set %}
+Groep {{ forloop.counter }}{% endfor %}
+{% for group_code in group_code_list %}
+Groep {{ group_code }}: jonathancorvers.pythonanywhere.com/inschrijven/{{ group_code }}{% endfor %}
+
+
+{% if reservation.voorverkoop %}
+Je hebt je ingeschreven in de voorverkoop periode dus €5,00 voor {{ subscribers|length }} deelnemers geeft een totaal van €{{ amount_due }},00
+Denk eraan dat dit dient te zijn overgeschreven naar BE43 3770 5327 8501 voor 18 februari 2017 om het voorverkoop tarief te behouden!
+{% else %}
+Je hebt je ingeschreven met {{ subscribers|length }} deelnemers, dit geeft een totaal van €{{ amount_due }},00
+Denk eraan dat dit dient te zijn overgeschreven naar BE43 3770 5327 8501 voor 4 maart 2017! Indien er minder dan 5 werkdagen voor deze datum over zijn, kan je best betalen aan de inkom.
+{% endif %}
+Bedankt en tot binnenkort!
+Limburgse Wolven

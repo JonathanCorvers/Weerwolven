@@ -1,0 +1,61 @@
+{% extends "Autospelleider/navbar.html" %}
+
+{% block jumbotron %}
+<div class="container">
+  <div class="jumbotron">
+    <h1>Dorpen</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Informatie over de dorpen</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+          <th>
+            <form action="{% url 'Autospelleider:genereerDorpsnamen' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Genereer dorpsnamen" class="btn btn-info">
+            </form>
+          </th>
+          <th>
+            <form action="{% url 'Autospelleider:verdeelDeelnemers' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Verdeel deelnemers" class="btn btn-info">
+            </form>
+          </th>
+          <th><form action="{% url 'Autospelleider:maakInwoners' %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Maak inwoners" class="btn btn-info btn-md">
+            </form></th>
+          <th>
+            <form action="{% url 'Autospelleider:selectCharacters' %}" method="post">
+                {% csrf_token %}
+                <input id="balanceerDorpen" type="submit" value="Balanceer dorpen" class="btn btn-info btn-md">
+            </form>
+          </th>
+      </tr>
+      <tr>
+        <th>Dorpsnaam</th>
+        <th>Aantal startinwoners bij start</th>
+          <th>Aantal inwoners nu</th>
+        <th>Machtsbalans</th>
+          <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for village in villages_list %}
+      <tr class='clickable-row' id="#goToVillage" data-url='../village/{{ village.village_name }}/participants'>
+            <td>{{ village.village_name }}</td>
+            <td>{{ village.sum_group_sizes }}</td>
+            <td>{{ village.count_villagers }}</td>
+            <td>{{ village.get_balance }}</td>
+            <td><a href="{% url 'Autospelleider:spelleiderInterfaceAuto' village_name=village.village_name auto_boodschap='start' %}"><button class="btn btn-info">Start</button></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

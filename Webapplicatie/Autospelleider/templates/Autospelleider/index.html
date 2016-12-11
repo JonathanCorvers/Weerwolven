@@ -1,0 +1,1208 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" bgproperties="fixed">
+    <head>
+        <title>Limburgse Wolven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#9c2424">
+        <link rel="icon" sizes="192x192" href="{% static 'Autospelleider/images/Logoklein.png' %}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="{% static 'Autospelleider/materialize/css/materialize.min.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="{% static 'Autospelleider/materialize/js/materialize.min.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+        <script>
+
+        var counter = 0;
+        var first_names = [];
+        var last_names = [];
+        var subscriptions = [];
+        var emails = [];
+        var ages = [];
+        var postdata = {};
+
+        function hasClass(element, cls) {
+            return ((' ' + element.classList + ' ').indexOf(' ' + cls + ' ') > -1);
+        }
+
+        function reloadDocument(){
+
+            $('#message_contact').val('');
+            $('#message_contact').trigger('autoresize');
+            $('#done').prop('disabled', true);
+            $('#done_contact').prop('disabled', true);
+            $('#add').prop('disabled', true);
+            $('#finalsubmit').prop('disabled', true);
+
+            $('select').material_select();
+            $('.carousel').carousel();
+            $('.collapsible').collapsible({
+                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+            });
+
+            function checkAllTheThings(){
+                var inputs, index;
+                var allvalid = 1;
+                var allvalidcontact = 1;
+
+                inputs = document.getElementsByTagName('input');
+                for (index = 0; index < inputs.length; index++) {
+                    if((hasClass(inputs[index], 'validate')) && (hasClass(inputs[index], 'inschrijving'))) {
+                        if(!(hasClass(inputs[index], 'valid'))) {
+                            allvalid = 0;
+                        }
+                    }
+
+                    if (!($(inputs[index]).val().length > 0)) { // Don't check against 0
+                        $(inputs[index]).removeClass('valid');
+                        $(inputs[index]).addClass('invalid');// If the input isn't ok
+                    }
+                }
+
+                var textareas = document.getElementsByTagName('textarea');
+                for (index = 0; index < textareas.length; index++) {
+                    if (!($(textareas[index]).val().length > 0)) { // Don't check against 0
+                        $(textareas[index]).removeClass('valid');
+                        $(textareas[index]).addClass('invalid');// If the input isn't ok
+                    } else {
+                        $(textareas[index]).removeClass('invalid');
+                        $(textareas[index]).addClass('valid');// If the input is ok
+                    }
+                }
+                activateFinalSubmit();
+
+                var age = $('#leeftijd' + counter.toString()).val();
+                if(Number.isInteger(parseInt(age))) {
+                    $('#leeftijd' + counter.toString()).addClass('valid');
+                }
+                for (index = 1; index < inputs.length; index++) {
+                    if((hasClass(inputs[index], 'validate')) && (hasClass(inputs[index], 'contact'))) {
+                        if(!(hasClass(inputs[index], 'valid'))) {
+                            allvalidcontact = 0;
+                        }
+                    }
+                }
+
+                for (index = 0; index < textareas.length; index++) {
+                    if((hasClass(textareas[index], 'validate')) && (hasClass(textareas[index], 'contact'))) {
+                        if(!(hasClass(textareas[index], 'valid'))) {
+                            allvalidcontact = 0;
+                        }
+                    }
+                }
+
+                if(allvalid == 1) {
+                    $('#done').prop('disabled', false);
+                    $('#add').prop('disabled', false);
+                } else {
+                    $('#done').prop('disabled', true);
+                    $('#add').prop('disabled', true);
+                }
+                if(allvalidcontact == 1) {
+                    $('#done_contact').prop('disabled', false);
+                } else {
+                    $('#done_contact').prop('disabled', true);
+                }
+
+            }
+
+            $(document).on('keyup', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('keypress', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('keydown', function() {
+                checkAllTheThings();
+
+            });
+
+            $(document).on('change', function() {
+                checkAllTheThings();
+
+            });
+
+            $("input").each(function() {
+                $(this).on('input', function() {
+                    var this_id = this.id;
+                    checkAllTheThings();
+                    $(document.getElementById(this_id)).removeClass('invalid');
+                    $(document.getElementById(this_id)).valid();
+                    var noError = 1;
+                    if($(document.getElementById(this_id)).hasClass('error')) {
+                        noError = 0;
+                    }
+                    $(document.getElementById(this_id)).removeClass('error');
+                    $("label").each(function() {
+                        if($(this).hasClass('error')) {
+                            $(this).addClass('active');
+                        } else {
+                            if($(this).hasClass('active') && !noError) {
+                                $(this).addClass('hide');
+                            }
+                        }
+                        if(noError) {
+                            $(this).removeClass('hide');
+                        }
+                    });
+                });
+            });
+
+            var group = [0, 0, 0, 0];
+            var subs = subscriptions.length;
+            var issues = '';
+
+            $('.custom-selected').on('change', function() {
+                var selection = $(this).val();
+                if(selection[0]=='c') {
+                    var selected_subscription = '#custom-code';
+                    var selected_subscriptionc = '#groepscode';
+                    var selected_subscriptiong = '#groepscodelabel';
+                    var k = 6;
+                    while(selection.length > k) {
+                        selected_subscription += selection[k];
+                        selected_subscriptionc += selection[k];
+                        selected_subscriptiong += selection[k];
+                        k = k + 1;
+                    }
+                    $(selected_subscription).removeClass("hide");
+                    $(selected_subscriptionc).removeClass("hide");
+                    $(selected_subscriptiong).removeClass("hide");
+                }
+                if(selection[0]=='n') {
+                    var selected_subscription = '#custom-code';
+                    var selected_subscriptionc = '#groepscode';
+                    var selected_subscriptiong = '#groepscodelabel';
+                    var k = 10;
+                    while(selection.length > k) {
+                        selected_subscription += selection[k];
+                        selected_subscriptionc += selection[k];
+                        selected_subscriptiong += selection[k];
+                        k = k + 1;
+                    }
+                    $(selected_subscription).addClass("hide");
+                    $(selected_subscriptionc).addClass("hide");
+                    $(selected_subscriptiong).addClass("hide");
+                    $(selected_subscriptionc).val("");
+                }
+                activateFinalSubmit(this);
+            });
+
+            function activateFinalSubmit () {
+                issues = '';
+                group = [0, 0, 0, 0];
+
+                var selects, index, groupnumber, selectvalue;
+                selects = document.getElementsByTagName('select');
+
+                for(index = 0; index < selects.length; index++) {
+                    selectvalue = selects[index].value;
+                    if(selectvalue[0]=='n') {
+                        groupnumber = parseInt(selectvalue[9]) - 1;
+                        group[groupnumber] = group[groupnumber] +1;
+                    }
+                }
+
+                var total = 0;
+                var i;
+                for(i = 0; i < 4; i++) {
+                    total = total + group[i];
+                    if((group[i]>4) && (subs < 17)) {
+                        var iplus = i+1;
+                        issues += 'Groep ' + iplus.toString() + ' heeft meer dan 4 deelnemers.<br>';
+                    }
+
+                }
+
+                for(i = 0; i < subs; i++) {
+                    var code_value = $('#groepscode' + i.toString()).val()
+                    if(!code_value) {
+                        code_value = "";
+                    }
+                    if(code_value.length > 0) {
+                        total = total + 1;
+                    }
+                }
+
+                if(subs > 16) {
+                    var maximum = Math.max.apply(Math, group);
+                    var minimum = Math.min.apply(Math, group);
+                    var diff =  maximum - minimum;
+                    if(diff > 1) {
+                        issues += 'Jullie zijn met heel veel, verdeel de groepen zo gelijkmatig mogelijk.<br>';
+                    }
+                }
+
+                if(!(total==subs)) {
+                    issues += 'Je hebt niet alle deelnemers een groep toegewezen.<br>';
+                }
+
+                if(issues.length > 0) {
+                    $('#finalsubmit').prop('disabled', true);
+                    $('#issues').removeClass('hide');
+                } else {
+                    $('#finalsubmit').prop('disabled', false);
+                    $('#issues').addClass('hide');
+                }
+
+                $('#issues').empty();
+                $('#issues').append(issues);
+
+            }
+
+            $('.submit').click(function() {
+
+                var action = $(this).val();
+                var buttonparent = $(this).parent();
+                $(buttonparent).empty();
+                var preloaderhtml = '';
+                preloaderhtml += '<div class="preloader-wrapper big active">';
+                    preloaderhtml += '<div class="spinner-layer">';
+                        preloaderhtml += '<div class="circle-clipper left">';
+                            preloaderhtml += '<div class="circle"></div>';
+                        preloaderhtml += '</div>';
+                        preloaderhtml += '<div class="gap-patch">';
+                            preloaderhtml += '<div class="circle"></div>';
+                        preloaderhtml += '</div>';
+                        preloaderhtml += '<div class="circle-clipper right">';
+                            preloaderhtml += '<div class="circle"></div>';
+                        preloaderhtml += '</div>';
+                    preloaderhtml += '</div>';
+                preloaderhtml += '</div>';
+                $(buttonparent).append(preloaderhtml);
+                if(action=='done_contact') {
+                    postdata_contact = {}
+                    if (!postdata_contact['first_name']) {
+                        postdata_contact['first_name'] = [];
+                    }
+                    postdata_contact['first_name'].push($('#first_name_contact').val());
+
+                    if (!postdata_contact['last_name']) {
+                        postdata_contact['last_name'] = [];
+                    }
+                    postdata_contact['last_name'].push($('#last_name_contact').val());
+
+                    if (!postdata_contact['email']) {
+                        postdata_contact['email'] = [];
+                    }
+                    postdata_contact['email'].push($('#email_contact').val());
+
+                    if (!postdata_contact['subject']) {
+                        postdata_contact['subject'] = [];
+                    }
+                    postdata_contact['subject'].push($('#subject_contact').val());
+
+                    if (!postdata_contact['message']) {
+                        postdata_contact['message'] = [];
+                    }
+                    postdata_contact['message'].push($('#message_contact').val());
+
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    var csrftoken = getCookie('csrftoken');
+                    function csrfSafeMethod(method) {
+                        // these HTTP methods do not require CSRF protection
+                        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+                    $.ajaxSetup({
+                        beforeSend: function(xhr, settings) {
+                            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                            }
+                        }
+                    });
+                    var mydata = $.param(postdata_contact);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'Autospelleider:sendContactMail' %}",
+                        data: {'mydata': mydata},
+                        success: function(data) {
+                            $('#contact-form-body').html(data);
+                        }
+                    });
+                }
+                if(action=='add' || action=='done') {
+                    subscriptions[subscriptions.length] = $('#first_name' + counter.toString()).val() + " " + $('#last_name' + counter.toString()).val();
+                    first_names[first_names.length] = $('#first_name' + counter.toString()).val();
+                    last_names[last_names.length] = $('#last_name' + counter.toString()).val();
+                    emails[emails.length] = $('#email' + counter.toString()).val();
+                    ages[ages.length] = $('#leeftijd' + counter.toString()).val().toString();
+
+                    if (!postdata['first_name' + counter.toString()]) {
+                        postdata['first_name' + counter.toString()] = [];
+                    }
+                    postdata['first_name' + counter.toString()].push($('#first_name' + counter.toString()).val());
+
+                    if (!postdata['last_name' + counter.toString()]) {
+                        postdata['last_name' + counter.toString()] = [];
+                    }
+                    postdata['last_name' + counter.toString()].push($('#last_name' + counter.toString()).val());
+
+                    if (!postdata['email' + counter.toString()]) {
+                        postdata['email' + counter.toString()] = [];
+                    }
+                    postdata['email' + counter.toString()].push($('#email' + counter.toString()).val());
+
+                    if (!postdata['leeftijd' + counter.toString()]) {
+                        postdata['leeftijd' + counter.toString()] = [];
+                    }
+                    postdata['leeftijd' + counter.toString()].push($('#leeftijd' + counter.toString()).val());
+                }
+
+                if(action=='finalsubmit') {
+                    var index;
+                    var subs = subscriptions.length;
+                    postdata['subs_amount'] = [];
+                    postdata['subs_amount'].push(subs.toString());
+
+                    for(index = 0; index < subs; index++){
+                        if (!postdata['custom-selected' + index.toString()]) {
+                            postdata['custom-selected' + index.toString()] = [];
+                        }
+                        postdata['custom-selected' + index.toString()].push($('#custom-selected' + index.toString()).val());
+
+                        if (!postdata['groepscode' + index.toString()]) {
+                            postdata['groepscode' + index.toString()] = [];
+                        }
+                        postdata['groepscode' + index.toString()].push("b'" + $('#groepscode' + index.toString()).val() + "'");
+                    }
+
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    var csrftoken = getCookie('csrftoken');
+                    function csrfSafeMethod(method) {
+                        // these HTTP methods do not require CSRF protection
+                        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+                    $.ajaxSetup({
+                        beforeSend: function(xhr, settings) {
+                            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                            }
+                        }
+                    });
+                    var mydata = $.param(postdata);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'Autospelleider:createReservation' %}",
+                        data: {'mydata': mydata},
+                        success: function(data) {
+                            $('#form-step').html(data);
+                        }
+                    });
+                }
+
+                var html = '';
+                if(action=='add') {
+                    counter = counter + 1;
+
+                    html += '<div class="col s12 m4 l3">';
+                        html += '<h5>Stap</h5>';
+                        html += '<p>Nu kan je de volgende persoon inschrijven. Klik daarna op de plus-knop indien je nog iemand wil toevoegen, anders klik je op het vinkje.</p>';
+
+                            html += '<p>';
+                                html += 'Velden met * zijn verplicht.';
+                            html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m4 l3">';
+                        html += '<h5>Overzicht</h5>';
+                        html += '<p id="p-overzicht">';
+                            for(i=0; i < subscriptions.length; i++) {
+                            html += subscriptions[i] + '<br>';
+                            }
+                        html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m4 l6">';
+                        html += '<h5>Formulier</h5>';
+                        html += '<div class="row">';
+                              html += '<div class="row">';
+                                html += '<div class="input-field col s6">';
+                                  html += '<input id="first_name' + counter.toString() + '" type="text" class="validate invalid inschrijving">';
+                                  html += '<label for="first_name' + counter.toString() + '" >Voornaam*</label>';
+                                html += '</div>';
+                                html += '<div class="input-field col s6">';
+                                  html += '<input id="last_name' + counter.toString() + '" type="text" class="validate invalid inschrijving">';
+                                  html += '<label for="last_name' + counter.toString() + '" >Achternaam*</label>';
+                                html += '</div>';
+                              html += '</div>';
+                              html += '<div class="row">';
+                                html += '<div class="input-field col s12">';
+                                  html += '<input id="email' + counter.toString() + '" type="email" class="validate invalid inschrijving">';
+                                  html += '<label for="email' + counter.toString() + '">Email*</label>';
+                                html += '</div>';
+                              html += '</div>';
+                              html += '<div class="row">';
+                                html += '<div class="input-field col s12 m12 l6">';
+                                  html += '<input id="leeftijd' + counter.toString() + '" type="number" class="validate invalid inschrijving">';
+                                  html += '<label for="leeftijd' + counter.toString() + '" >Leeftijd*</label>';
+                                html += '</div>';
+                                html += '<div class="input-field col s4 m4 l2">';
+                                    html += '<button type="button" class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" id="back' + counter.toString() + '" value="back" name="back">';
+                                        html += '<i class="material-icons">undo</i>';
+                                    html += '</button>';
+                                html += '</div>';
+                                html += '<div class="input-field col s4 m4 l2 center-btn center-align">';
+                                    html += '<button type="button" class="submit btn-floating btn-large waves-effect waves-light red middle" title="Voeg nog een deelnemer toe" id="add" value="add" name="add">';
+                                        html += '<i class="material-icons">add</i>';
+                                    html += '</button>';
+                                html += '</div>';
+                                html += '<div class="input-field col s4 m4 l2">';
+                                    html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Dit was de laatste die ik wou inschrijven" type="button" id="done" value="done" name="done">';
+                                        html += '<i class="material-icons">done</i>';
+                                    html += '</button>';
+                                html += '</div>';
+                              html += '</div>';
+                        html += '</div>';
+                    html += '</div>';
+                $('#form-step').empty();
+                $('#form-step').append(html);
+                reloadDocument();
+                }
+                if(action=='done') {
+                    counter = counter + 1;
+
+                    html += '<div class="col s12 m6 l6">';
+                        html += '<h5>Stap</h5>';
+                        html += '<p>';
+                            html += 'Staat iedereen die je wil inschrijven in deze lijst? Zo nee, gebruik dan de terug-knop.';
+                        html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m6 l6">';
+                        html += '<div class="row">';
+                            html += '<h5>Is deze lijst volledig?</h5>';
+                            html += '<h6 class="hide-on-med-and-up">Deze tabel scrollt zijwaarts.</h6>';
+                            html += '<table class="table table-striped responsive-table">';
+                                html += '<thead>';
+                                  html += '<tr>';
+                                      html += '<th>';
+                                          html += 'Naam';
+                                      html += '</th>';
+                                      html += '<th>';
+                                          html += 'E-mailadres';
+                                      html += '</th>';
+                                      html += '<th>';
+                                          html += 'Leeftijd';
+                                      html += '</th>';
+                                  html += '</tr>';
+                                html += '</thead>';
+                                html += '<tbody id="table-body">';
+
+                                slen = subscriptions.length;
+                                var i;
+                                for(i = 0; i < slen; i++) {
+                                    html += "<tr><td>" + subscriptions[i] + "</td><td>" + emails[i] + "</td><td>" + ages[i] + "</td></tr>";
+                                }
+                                html += '</tbody>';
+                              html += '</table>';
+                              html += '</div>';
+                              html += '<div class="row center-align">';
+                                    html += '<div class="col s6 m6 l6">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" type="button" id="back" value="back" name="back">';
+                                            html += '<i class="material-icons">undo</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="col s6 m6 l6">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen die ik wou inschrijven staat in deze lijst" type="submit" id="DONE" value="DONE" name="done">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                              html += '</div>';
+                    html += '</div>';
+                $('#form-step').empty();
+                $('#form-step').append(html);
+                reloadDocument();
+                }
+                if(action=='DONE') {
+                    counter = counter + 1;
+
+                    html += '<div class="col s12 m4 l4">';
+                        html += '<h5>Stap</h5>';
+                        html += '<p>';
+                            html += 'Zoals je weet spelen we met meerdere dorpen. We plaatsen maximaal 4 personen die elkaar kennen in hetzelfde dorp. In deze stap kan je kiezen wie van de deelnemers samen in een dorp komen te zitten, en je kan ook deelnemers toewijzen aan de groep van een vriend die zich al heeft ingeschreven.';
+                        html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m8 l8">';
+                        html += '<div class="row">';
+                            html += '<div class="col s4 m4 l4">';
+                                html += '<h5>Namen</h5>';
+                            html += '</div>';
+                            html += '<div class="col s4 m8 l8">';
+                                html += '<h5>Verdeel deelnemers</h5>';
+                            html += '</div>';
+                        html += '</div>';
+                        html += '<div class="row" id="p-overzicht">';
+                                html += '<div class="col s12 m12 l12">';
+                                    for(i=0; i < subscriptions.length; i++) {
+                                    html += '<div class="row valign-wrapper ' + subscriptions[i] + '">';
+                                        html += '<div class="col s12 m4 l4 valign-wrapper valign" id="' + subscriptions[i] + '">';
+                                            html += '<div class="valign">' + subscriptions[i] + '</div>';;
+                                        html += '</div>';
+                                        html += '<div class="col s12 m3 l3 input-field">';
+                                            html += '<select class="custom-selected" id="custom-selected' + i.toString() + '">';
+                                                html += '<option value="" disabled selected>Selecteer groep</option>';
+
+                                                var slen = subscriptions.length;
+                                                var subgroups = Math.min(4, slen);
+                                                for(j=1; j <= subgroups; j++) {
+                                                    html += '<option value="noncustom' + j.toString() + i.toString() + '">Groep ' + j.toString() + '</option>';
+                                                }
+                                                html += '<option value="custom' + i.toString() + '">Groep van vriend</option>';
+                                            html += '</select>';
+                                        html += '</div>';
+                                        html += '<div class="col s12 m5 l5 input-field">';
+                                            html += '<input id="groepscode' + i.toString() + '" type="text" class="custom-code validate hide inschrijving">';
+                                            html += '<label class="custom-code hide" id="groepscodelabel' + i.toString() + '" for="groepscode' + i.toString() + '" >Groepscode</label>';
+                                        html += '</div>';
+                                    html += '</div>';
+                                    html += "{% csrf_token %}";
+                                    }
+                                html += '</div>';
+                        html += '</div>';
+                        html += '<div class="row">';
+                                html += '<div class="input-field col s6 m6 l6">';
+                                        html += '<button type="button" class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" id="back' + counter.toString() + '" value="back" name="back">';
+                                            html += '<i class="material-icons">undo</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s6 m6 l6">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Dit was de laatste die ik wou inschrijven" type="submit" id="finalsubmit" value="finalsubmit" name="finalsubmit">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                        html += '</div>';
+                        html += '<div class="row">';
+                                html += '<div class="input-field col s12 m12 l12">';
+                                    html += '<p class="red flow-text hide" id="issues"></p>';
+                                html += '</div>';
+                        html += '</div>';
+                    html += '</div>';
+                $('#form-step').empty();
+                $('#form-step').append(html);
+                reloadDocument();
+                }
+                if(action=='back') {
+                    counter = counter - 1;
+                    slen = subscriptions.length;
+                    if(counter==0) {
+                        html += '<div class="col s12 m6 l4">';
+                            html += '<h5>Stap</h5>';
+                            html += '<p>';
+                                html += 'Jij bent de hoofdinschrijver, eerst willen we dus graag jouw gegevens. Klik daarna op de plus-knop indien je nog iemand wil toevoegen, anders klik je op het vinkje.';
+                            html += '</p>';
+                            html += '<p>';
+                                html += 'Velden met * zijn verplicht.';
+                            html += '</p>';
+                        html += '</div>';
+                        html += '<div class="col s12 m6 l8">';
+                            html += '<h5>Formulier</h5>';
+                            html += '<div class="row">';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s6">';
+                                      html += '<input id="first_name0" type="text" value="' + first_names[slen - 1] + '" class="validate valid inschrijving">';
+                                      html += '<label for="first_name0" class="active">Voornaam*</label>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s6">';
+                                      html += '<input id="last_name0" type="text" class="validate valid inschrijving" value="' + last_names[slen - 1] + '">';
+                                      html += '<label for="last_name0" class="active">Achternaam*</label>';
+                                    html += '</div>';
+                                  html += '</div>';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s12">';
+                                      html += '<input id="email0" type="email" class="validate valid inschrijving" value="' + emails[slen - 1] + '">';
+                                      html += '<label for="email0" class="active">Email*</label>';
+                                    html += '</div>';
+                                  html += '</div>';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s12 m6 l6">';
+                                      html += '<input id="leeftijd0" type="number" class="validate valid inschrijving" value="' + ages[slen - 1] + '">';
+                                      html += '<label for="leeftijd0" class="active">Leeftijd*</label>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s6 m3 l3">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red right" title="Voeg nog een deelnemer toe" type="button" id="add" value="add" name="add">';
+                                            html += '<i class="material-icons">add</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s6 m3 l3">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Dit was de laatste die ik wou inschrijven" type="button" id="done" value="done" name="done">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                  html += '</div>';
+                            html += '</div>';
+                        html += '</div>';
+                        subscriptions.pop();
+                        first_names.pop();
+                        last_names.pop();
+                        emails.pop();
+                        ages.pop();
+                    }
+                    if((counter==slen-1) && counter > 0) {
+                        html += '<div class="col s12 m4 l3">';
+                            html += '<h5>Stap</h5>';
+                            html += '<p>Nu kan je de volgende persoon inschrijven. Klik daarna op de plus-knop indien je nog iemand wil toevoegen, anders klik je op het vinkje.</p>';
+
+                            html += '<p>';
+                                html += 'Velden met * zijn verplicht.'
+                            html += '</p>';
+                            html += '</div>';
+                        html += '<div class="col s12 m4 l3">';
+                            html += '<h5>Overzicht</h5>';
+                            html += '<p id="p-overzicht">';
+                                for(i=0; i < subscriptions.length; i++) {
+                                html += subscriptions[i] + '<br>';
+                                }
+                            html += '</p>';
+                        html += '</div>';
+                        html += '<div class="col s12 m4 l6">';
+                            html += '<h5>Formulier</h5>';
+                            html += '<div class="row">';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s6">';
+                                      html += '<input id="first_name' + counter.toString() + '" type="text" class="validate valid inschrijving" value="' + first_names[slen - 1] + '">';
+                                      html += '<label for="first_name' + counter.toString() + '" class="active">Voornaam*</label>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s6">';
+                                      html += '<input id="last_name' + counter.toString() + '" type="text" class="validate valid inschrijving" value="' + last_names[slen - 1] + '">';
+                                      html += '<label for="last_name' + counter.toString() + '" class="active">Achternaam*</label>';
+                                    html += '</div>';
+                                  html += '</div>';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s12">';
+                                      html += '<input id="email' + counter.toString() + '" type="email" class="validate valid inschrijving" value="' + emails[slen - 1] + '">';
+                                      html += '<label for="email' + counter.toString() + '" class="active">Email*</label>';
+                                    html += '</div>';
+                                  html += '</div>';
+                                  html += '<div class="row">';
+                                    html += '<div class="input-field col s12 m12 l6">';
+                                      html += '<input id="leeftijd' + counter.toString() + '" type="number" class="validate valid inschrijving" value="' + ages[slen - 1] + '">';
+                                      html += '<label for="leeftijd' + counter.toString() + '" class="active">Leeftijd*</label>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s4 m4 l2">';
+                                        html += '<button type="button" class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" id="back' + counter.toString() + '" value="back" name="back">';
+                                            html += '<i class="material-icons">undo</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s4 m4 l2 center-btn center-align">';
+                                        html += '<button type="button" class="submit btn-floating btn-large waves-effect waves-light red middle" title="Voeg nog een deelnemer toe" id="add" value="add" name="add">';
+                                            html += '<i class="material-icons">add</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="input-field col s4 m4 l2">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Dit was de laatste die ik wou inschrijven" type="button" id="done" value="done" name="done">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                  html += '</div>';
+                            html += '</div>';
+                        html += '</div>';
+                        subscriptions.pop();
+                        first_names.pop();
+                        last_names.pop();
+                        emails.pop();
+                        ages.pop();
+                    }
+                if((counter == slen) && counter > 0) {
+                    html += '<div class="col s12 m6 l6">';
+                        html += '<h5>Stap</h5>';
+                        html += '<p>';
+                            html += 'Staat iedereen die je wil inschrijven in deze lijst? Zo nee, gebruik dan de terug-knop.';
+                        html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m6 l6">';
+                        html += '<div class="row">';
+                            html += '<h5>Is deze lijst volledig?</h5>';
+                            html += '<h6 class="hide-on-med-and-up">Deze tabel scrollt zijwaarts.</h6>';
+                            html += '<table class="table table-striped responsive-table">';
+                                html += '<thead>';
+                                  html += '<tr>';
+                                      html += '<th>';
+                                          html += 'Naam';
+                                      html += '</th>';
+                                      html += '<th>';
+                                          html += 'E-mailadres';
+                                      html += '</th>';
+                                      html += '<th>';
+                                          html += 'Leeftijd';
+                                      html += '</th>';
+                                  html += '</tr>';
+                                html += '</thead>';
+                                html += '<tbody id="table-body">';
+
+                                slen = subscriptions.length;
+                                var i;
+                                for(i = 0; i < slen; i++) {
+                                    html += "<tr><td>" + subscriptions[i] + "</td><td>" + emails[i] + "</td><td>" + ages[i] + "</td></tr>";
+                                }
+                                html += '</tbody>';
+                              html += '</table>';
+                              html += '</div>';
+                              html += '<div class="row center-align">';
+                                    html += '<div class="col s6 m6 l6">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" type="button" id="back" value="back" name="back">';
+                                            html += '<i class="material-icons">undo</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                                    html += '<div class="col s6 m6 l6">';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen die ik wou inschrijven staat in deze lijst" type="submit" id="DONE" value="DONE" name="done">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</div>';
+                              html += '</div>';
+                    html += '</div>';
+                }
+                if((counter == slen + 1) && counter > 0) {
+                html += '<div class="col s12 m6 l6">';
+                        html += '<h5>Stap</h5>';
+                        html += '<p>';
+                            html += 'Staat iedereen die je wil inschrijven in deze lijst? Zo nee, gebruik dan de terug-knop';
+                        html += '</p>';
+                    html += '</div>';
+                    html += '<div class="col s12 m6 l6">';
+                        html += '<h5>Is deze lijst volledig?</h5>';
+                        html += '<table class="table table-striped responsive-table">';
+                            html += '<thead>';
+                              html += '<tr>';
+                                  html += '<th>';
+                                      html += 'Naam';
+                                  html += '</th>';
+                                  html += '<th>';
+                                      html += 'E-mailadres';
+                                  html += '</th>';
+                                  html += '<th>';
+                                      html += 'Leeftijd';
+                                  html += '</th>';
+                              html += '</tr>';
+                            html += '</thead>';
+                            html += '<tbody id="table-body">';
+
+                            slen = subscriptions.length;
+                            var i;
+                            for(i = 0; i < slen; i++) {
+                                html += "<tr><td>" + subscriptions[i] + "</td><td>" + emails[i] + "</td><td>" + ages[i] + "</td></tr>";
+                            }
+                              html += '<tr>';
+                                    html += '<td>';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red right" title="Terug naar het vorige scherm" type="button" id="back" value="back" name="back">';
+                                            html += '<i class="material-icons">undo</i>';
+                                        html += '</button>';
+                                    html += '</td>';
+                                    html += '<td>';
+                                        html += '<button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen die ik wou inschrijven staat in deze lijst" type="submit" id="DONE" value="DONE" name="done">';
+                                            html += '<i class="material-icons">done</i>';
+                                        html += '</button>';
+                                    html += '</td>';
+                                    html += '<td></td>';
+                              html += '</tr>';
+                            html += '</tbody>';
+                          html += '</table>';
+                    html += '</div>';
+                }
+                $('#form-step').empty();
+                $('#form-step').append(html);
+                reloadDocument();
+                $('#done').prop('disabled', false);
+                $('#add').prop('disabled', false);
+                }
+            });
+        }
+
+        var recentpullmenu = 0;
+        $(document).ready(function(){
+            var pageload = 1;
+
+            $('.vertical-tabs').pushpin({
+              top: 0,
+              bottom: 1000,
+              offset: 0
+            });
+
+            $('#smallnav').click(function(){
+                if ($("#smallnav").hasClass("expanded")) {
+                    $( '#smallnav' ).removeClass("expanded");
+                    $( '#pulldownbtn' ).removeClass("expanded");
+                    $( '.smallheader-div' ).each(function () {
+                        $(this).removeClass("expanded");
+                    });
+                    window.scrollTo(0, 0);
+                } else {
+                    if(!pageload) {
+                        $( '#smallnav' ).addClass("expanded");
+                        $( '#pulldownbtn' ).addClass("expanded");
+                        $( '.smallheader-div' ).each(function () {
+                            $(this).addClass("expanded");
+                        });
+                    }
+                    pageload = 0;
+                }
+                recentpullmenu = 1;
+            });
+
+            $(":not(#smallnav, #smallnav *, #bignav, #bignav *, .btn-large, .btn-large *)").on("click", function(e){
+                console.log(this);
+                e.stopPropagation();
+                if ($("#smallnav").hasClass("expanded") && !recentpullmenu) {
+                    $( '#smallnav' ).removeClass("expanded");
+                    $( '#pulldownbtn' ).removeClass("expanded");
+                    $( '.smallheader-div' ).each(function () {
+                        $(this).removeClass("expanded");
+                    });
+                }
+                recentpullmenu = 0;
+            });
+
+            $('ul.tabs').tabs('select_tab', 'event-body');
+            reloadDocument();
+        });
+        </script>
+        <link rel="stylesheet" href="{% static 'Autospelleider/css/public.css' %}">
+        <style>
+
+
+            html {
+                min-height: 100vh;
+                bottom: 0;
+                background-image: url({{ background_person }}), url({{ background_cover }});
+                background-position: left bottom, center center;
+                background-repeat: no-repeat, no-repeat, repeat-x;
+                background-size: auto 50vh, cover;
+                background-attachment: fixed, fixed;
+                animation: animatedPerson 1s ease-out;
+                animation-iteration-count: 1;
+                -ms-animation: animatedPerson 1s ease-out;
+                -ms-animation-iteration-count: 1;
+                -moz-animation: animatedPerson 1s ease-out;
+                -moz-animation-iteration-count: 1;
+                -webkit-animation: animatedPerson 1s ease-out;
+                -webkit-animation-iteration-count: 1;
+            }
+        </style>
+        <style>
+            /*********************** tags **********************/
+
+#tags{
+	color: #1b1b1b;
+	background-image: url("{% static 'Autospelleider/images/decTags.svg' %}");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+
+</style> <!-- style for over ons -->
+        <script>
+            $(document).on('submit','#new_reservation_form', function(e){
+                var action = $(this).val();
+                if(action != "finalsubmit"){
+                    e.preventDefault();
+                }
+            });
+
+            function eventFire(el, etype){
+              if (el.fireEvent) {
+                el.fireEvent('on' + etype);
+              } else {
+                var evObj = document.createEvent('Events');
+                evObj.initEvent(etype, true, false);
+                el.dispatchEvent(evObj);
+              }
+            }
+        </script>
+
+    </head>
+    <body class="container">
+        <div class="row">
+                <ul class="tabs z-depth-0 hide-on-med-and-down" id="bignav">
+                    <li class="tab" id="header-about">
+                                <a class="header-div" href="#about-body">Over ons</a>
+                    </li>
+                    <li class="tab" id="header-event">
+                                <a class="header-div" href="#event-body">Weerwolvenevent</a>
+                    </li>
+                    <li class="tab" id="header-waarom">
+                                <a class="header-div" href="#waarom-body">Waarom meedoen?</a>
+                    </li>
+                    <li class="tab" id="header-inschrijven">
+                                <a class="header-div" href="#inschrijven-body">Inschrijven</a>
+                    </li>
+                    <li class="tab" id="header-contact">
+                                <a class="header-div" href="#contact-body">Contact</a>
+                    </li>
+                </ul>
+                <ul class="tabs hide-on-large-only tabs-fixed-width vertical-tabs" id="smallnav">
+                    <li class="tab col s12 smalltab smallheader-div" id="smallheader-about">
+                        <a class="header-div"  href="#about-body">Over ons</a>
+                    </li>
+                    <li class="tab col s12 smalltab smallheader-div" id="smallheader-event">
+                        <a class="header-div"  href="#event-body">Weerwolvenevent</a>
+                    </li>
+                    <li class="tab col s12 smalltab smallheader-div" id="smallheader-waarom">
+                        <a class="header-div"  href="#waarom-body">Waarom meedoen</a>
+                    </li>
+                    <li class="tab col s12 smalltab smallheader-div" id="smallheader-inschrijven">
+                        <a class="header-div"  href="#inschrijven-body">Inschrijven</a>
+                    </li>
+                    <li class="tab col s12 smalltab smallheader-div" id="smallheader-contact">
+                        <a class="header-div"  href="#contact-body">Contact</a>
+                    </li>
+                    <li class="tab col s12 smalltab valign-wrapper" id="smallheader-menu">
+                        <span class="valign-wrapper center-align col s2 push-s5">Menu <i class="fa fa-angle-down valign" id="pulldownbtn" style="font-size:36px;"></i></span>
+                    </li>
+                </ul>
+            <div class="col s12 m12 l12" id="about-body">
+                            <div class="col s12 m12 l12 collapsible-body-div">
+                                <div class="row" id="secondRow">
+                                    <div class="col s12 m6 l6 middle" id="Wie">
+                                        <h5>Wie we zijn</h5>
+                                            <ul class="collection wie-collection row">
+                                                <li class="collection-item avatar col s12 m12 l6">
+                                                  <img src="https://lh5.googleusercontent.com/-10dSAOX5o7o/AAAAAAAAAAI/AAAAAAAAABE/yPV-utIZC34/s120-c/photo.jpg" alt="" class="circle">
+                                                  <span class="title flow-text">Sarah Hendrickx<br></span>
+                                                  <span class="flow-text body truncate">
+                                                      Voorzitter
+                                                  </span>
+                                                </li> <!-- Sarah Hendrickx -->
+                                                <li class="collection-item avatar col s12 m12 l6">
+                                                  <img src="https://lh4.googleusercontent.com/-yhAH293EZd0/AAAAAAAAAAI/AAAAAAAAAP4/M85AMoNFgjI/s120-c/photo.jpg" alt="" class="circle">
+                                                  <span class="title flow-text">Sara Briers<br></span>
+                                                  <span class="flow-text body truncate">
+                                                      Notulist
+                                                  </span>
+                                                </li> <!-- Sara Briers -->
+                                                <li class="collection-item avatar col s12 m12 l6">
+                                                  <img src="https://lh5.googleusercontent.com/-DUYJhhzf8eg/AAAAAAAAAAI/AAAAAAAAGH4/U-uKvcXJDx8/s120-c/photo.jpg" alt="" class="circle">
+                                                  <span class="title flow-text">Jonathan Corvers<br></span>
+                                                  <span class="flow-text body truncate">
+                                                      Penningmeester
+                                                  </span>
+                                                </li> <!-- Jonathan Corvers -->
+                                                <li class="collection-item avatar col s12 m12 l6">
+                                                  <img src="https://lh4.googleusercontent.com/-G_ivVEn8mbA/AAAAAAAAAAI/AAAAAAAAADw/iQn6A7-_86E/s120-c/photo.jpg" alt="" class="circle">
+                                                  <span class="title flow-text">Nikki Corvers<br></span>
+                                                  <span class="flow-text body truncate">
+                                                      Webmaster
+                                                  </span>
+                                                </li> <!-- Nikki Corvers -->
+                                            </ul>
+                                    </div>
+                                    <div class="col m6 middle" id="Wat">
+                                        <h5>Wat we doen</h5>
+                                        <p>
+                                            De Limburgse Wolven willen graag evenementen organiseren waar we op grote schaal 'Weerwolven van Wakkerdam' en varianten spelen. Op deze manier kunnen we zowel nieuwe spelers warm maken voor het weerwolvenspel, als weerwolvenfans verrassen met een andere manier van spelen. Zeker niet minder belangrijk willen we mensen van alle leeftijden de kans geven om in een ontspannen sfeer nieuwe mensen te leren kennen.
+                                        </p>
+                                    </div> <!-- column -->
+                                </div> <!-- secondrow -->
+                                <div class="row hide-on-med-and-down" id="firstRow">
+                                    <div class="col m6" id="logoTop">
+                                        <img src="{% static 'Autospelleider/images/logo.png' %}" width="100%" />
+                                    </div>
+                                    <div class="col m6" id="tags">
+                                        <em><h4 class="left">Voor zij die gebeten zijn </h4><h4 class="right">door weerwolven</h4></em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            <div class="col s12 m12 l12" id="event-body">
+                <div class="row" id="fourthRow">
+                    <div class="col s12 m3 l3" id="eventWanneer">
+                        <h5>Wanneer</h5>
+                        <p>
+                            Ons volgende grote event zal doorgaan zaterdag 4 maart 2017! Mis het niet! Vergeet niet je tijdig in te schrijven, het aantal plaatsen is beperkt! Inschrijven kan vanaf 1 januari 2017.
+                        </p>
+                    </div>
+                    <div class="col s12 m3 l3" id="eventWat">
+                        <h5>Wat</h5>
+                        <p>
+                            We zullen in grote groep drie maal het spel 'Weerwolven en Waaghalzen' spelen. De burgers en de weerwolven zullen het tegen elkaar opnemen in dorpen van 18 spelers. Je zult moeten liegen en de juiste mensen op het juiste moment moeten vermoorden om te overleven in deze dorpen waar de wijsvinger een dodelijk wapen is.
+                            <br>In voorverkoop (tot 18 februarie 2017) mag je voor 5EUR de hele avond deelnemen, en krijg je er nog een gratis consumptie bovenop! Na voorverkoop 7EUR.
+                        </p>
+                    </div>
+                    <div class="col s12 m3 l3" id="eventWie">
+                        <h5>Wie</h5>
+                        <p>Iedereen ouder dan 15 is welkom! Ook als je nog nooit gespeeld hebt, moet je geen schrik hebben om deel te nemen. Onze spelleiders zullen alles uitleggen en we beginnen met een eenvoudig spel. Voor de ervaren spelers voegen we daarna enkele extra's toe om het extra spannend te maken.</p>
+                    </div>
+                    <div class="col s12 m3 l3" id="eventWaar">
+                        <h5>Waar</h5>
+                        <p>
+                            Stadhuis Genk<br>
+                            Stadsplein 1<br>
+                            3600 Genk<br>
+
+                        </p>
+                        <iframe width="100%" height="150" frameborder="0" style="border:0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2512.7626535698296!2d5.491940315660156!3d50.96509235802941!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c0ded56242efe3%3A0x7610838da8be9d2b!2sStad+Genk+(stadhuis)!5e0!3m2!1sen!2sbe!4v1451829575442"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m12 l12" id="waarom-body">
+                <div class="row" id="fourthRowContact">
+                    <div class="col s12 m3 l3" id="waaromZwerven">
+                        <h5 class="valign-wrapper">Je kan zwerven</h5>
+                        <p>
+                            Voel je je bedreigd in je dorp? Denkt iedereen dat je een wolf bent? Vermoeden de wolven dat je ziener of heks bent en sta je dus op hun lunch-lijstje? Ga naar een ander dorp! Maar pas op: sommige dorpen staan heel wantrouwig tegenover nieuwelingen... Of zitten vol met wolven!
+                        </p>
+                    </div>
+                    <div class="col s12 m3 l3" id="waaromActiekaartjes">
+                        <h5 class="valign-wrapper">Actiekaartjes</h5>
+                        <p>
+                            Elke dode heeft nog een waterkansje om toch weer tot leven te komen, eventueel in een ander dorp. Ook kan je verbannen worden, op reis gaan om je lieve tante op te zoeken, of misschien zelfs een nieuwe rol krijgen...
+                        </p>
+                    </div>
+                    <div class="col s12 m3 l3" id="waaromDood">
+                        <h5 class="valign-wrapper">Er is leven na de dood</h5>
+                        <p>
+                            De doden moeten niet doelloos wachten en toekijken tot het spel gedaan is. Drink lekker wat in de cafetaria of ga naar het kerkhof om nog eens te weerwolven met de andere zombies.
+                        </p>
+                    </div>
+                    <div class="col s12 m3 l3" id="waaromLeugenaar">
+                        <h5 class="valign-wrapper">Word een betere leugenaar</h5>
+                        <p>
+                            Je komt in meerdere dorpen dus je leert meer mensen kennen. Weten jouw vrienden dat je met je neusvleugels trilt wanneer je liegt? Laat ze achter om opgegeten te worden!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m12 l12" id="inschrijven-body">
+                <form id="new_reservation_form" action="{% url 'Autospelleider:createReservation' %}" class="col s12 m12 l12" method="post">
+
+                    <div class="" id="form-step">
+                        <div class="col s12 m6 l4">
+                            <h5>Stap</h5>
+                            <p>
+                                Jij bent de hoofdinschrijver, eerst willen we dus graag jouw gegevens. Klik daarna op de plus-knop indien je nog iemand wil toevoegen, anders klik je op het vinkje.
+                            </p>
+                            <p>
+                                Velden met * zijn verplicht.
+                            </p>
+                        </div>
+                        <div class="col s12 m6 l8">
+                            <h5>Formulier</h5>
+                            <div class="row">
+                                  <div class="row">
+                                    <div class="input-field col s6">
+                                      <input id="first_name0" type="text" class="validate invalid inschrijving">
+                                      <label for="first_name0">Voornaam*</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                      <input id="last_name0" type="text" class="validate invalid inschrijving">
+                                      <label for="last_name0">Achternaam*</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <input id="email0" type="email" class="validate invalid inschrijving">
+                                      <label for="email0">Email*</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12 m6 l6">
+                                      <input id="leeftijd0" type="number" class="validate invalid inschrijving">
+                                      <label for="leeftijd0">Leeftijd*</label>
+                                    </div>
+                                    <div class="input-field col s6 m3 l3">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red right" title="Voeg nog een deelnemer toe" type="button" id="add" value="add" name="add">
+                                            <i class="material-icons">add</i>
+                                        </button>
+                                    </div>
+                                    <div class="input-field col s6 m3 l3">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red left" title="Dit was de laatste die ik wou inschrijven" type="button" id="done" value="done" name="done">
+                                            <i class="material-icons">done</i>
+                                        </button>
+                                    </div>
+                                  </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col s12 m12 l12" id="contact-body">
+                <form id="contact_form" action="{% url 'Autospelleider:sendContactMail' %}" class="col s12 m12 l12" method="post">
+                    <div class="" id="contact-step">
+                        <div class="col s12 m10 l10 push-m1 push-l1">
+                            <h5>Mail ons je vraag!</h5>
+                            <p>
+                                De Limburgse wolven bijten niet! Aarzel dus niet om het contactformulier hieronder in te vullen en ons je vragen te stellen. We werken met een klein team en proberen zo snel mogelijk je vragen te beantwoorden. Je kan een antwoord verwachten binnen 48 uur.
+                            </p>
+                            <p>
+                                Velden met * zijn verplicht.
+                            </p>
+                        </div>
+                        <div id="contact-form-body" class="col s12 m6 l6 push-m3 push-l3">
+                            <h5>Formulier</h5>
+                            <div class="row">
+                                  <div class="row">
+                                    <div class="input-field col s6">
+                                      <input id="first_name_contact" type="text" class="validate invalid contact">
+                                      <label for="first_name_contact">Voornaam*</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                      <input id="last_name_contact" type="text" class="validate invalid contact">
+                                      <label for="last_name_contact">Achternaam*</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <input id="email_contact" type="email" class="validate invalid contact">
+                                      <label for="email_contact">Email*</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12 m12 l12">
+                                      <input id="subject_contact" type="text" class="validate invalid contact">
+                                      <label for="subject_contact">Onderwerp*</label>
+                                    </div>
+                                    <div class="input-field col s12 m12 l12">
+                                        <textarea id="message_contact" class="materialize-textarea validate invalid contact"></textarea>
+                                        <label for="message_contact">Bericht*</label>
+                                    </div>
+                                    <div class="input-field col s12 m12 l12">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red right" type="button" id="done_contact" value="done_contact" name="done_contact">
+                                            <i class="material-icons">done</i>
+                                        </button>
+                                    </div>
+                                  </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+
+</html>

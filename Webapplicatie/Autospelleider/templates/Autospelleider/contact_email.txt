@@ -1,0 +1,12 @@
+Naam: {{ first_name }} {{ last_name }}
+
+E-mailadres: {{ email }}
+
+Onderwerp: {{ subject }}
+
+Bericht:
+{{ message }}
+
+We proberen zo snel mogelijk te antwoorden!
+Limburgse Wolven
+

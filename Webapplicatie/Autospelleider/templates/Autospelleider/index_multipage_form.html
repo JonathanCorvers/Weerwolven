@@ -1,0 +1,374 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Limburgse Wolven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="{% static 'Autospelleider/materialize/css/materialize.min.css' %}">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="{% static 'Autospelleider/materialize/js/materialize.min.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.plugin.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/jquery.countdown.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/date.js' %}"></script>
+        <script src="{% static 'Autospelleider/js/shapewrapper.js' %}"></script>
+        <script>
+        var counter = 0;
+        var subscriptions = [];
+        var emails = [];
+        var ages = [];
+        var postdata = {};
+        $(document).ready(function(){
+            $('.carousel').carousel();
+            $('.collapsible').collapsible({
+                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+            });
+
+            $('.submit').click(function() {
+                subscriptions[subscriptions.length] = $('#first_name0').val() + " " + $('#last_name0').val();
+                emails[emails.length] = $('#email0').val();
+                ages[ages.length] = $('#leeftijd0').val().toString();
+                if (!postdata['first_name0']) {
+                    postdata['first_name0'] = [];
+                }
+                postdata['first_name0'].push($('#first_name0').val());
+
+                if (!postdata['last_name0']) {
+                    postdata['last_name0'] = [];
+                }
+                postdata['last_name0'].push($('#last_name0').val());
+
+                if (!postdata['email0']) {
+                    postdata['email0'] = [];
+                }
+                postdata['email0'].push($('#email0').val());
+
+                if (!postdata['leeftijd0']) {
+                    postdata['leeftijd0'] = [];
+                }
+                postdata['leeftijd0'].push($('#leeftijd0').val());
+
+                counter = counter + 1;
+                var action = $(this).val();
+                var url = "/formStep/";
+                url = url.concat(counter.toString());
+                url = url.concat("/");
+                url = url.concat(action);
+                url = url.concat("/");
+                $('#form-step').load(url);
+            });
+
+        });
+        </script>
+        <style>
+            body {
+                background: cyan;
+            }
+
+            .collapsible-body {
+                margin: 0;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: inherit;
+                border: 0;
+                background-color:rgba(255, 255, 255, 0.5);
+            }
+
+            .header-div {
+                margin: 0;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 100%;
+                border: 0;
+            }
+
+            .collapsible-header {
+                margin-bottom: 0;
+                padding: 0;
+                width: 100%;
+                margin-right: 0;
+                background-color:rgba(255, 255, 255, 0);
+            }
+
+            #header-about, #header-event, #header-inschrijven, #header-contact {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                border: 0;
+            }
+
+            .collapsible-body-div {
+                background-color:rgba(255, 255, 255, 0.5);
+            }
+        </style>
+        <style>
+            /*********************** tags **********************/
+
+#tags{
+	color: #1b1b1b;
+	background-image: url("{% static 'Autospelleider/images/decTags.svg' %}");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+#tags h1 {
+	font-size: 2.8em;
+}
+
+#tags .left {
+	text-align: left;
+}
+
+#tags .right {
+	text-align: right;
+}
+
+#secondRow h3 {
+	font-weight: bold;
+	color: #9c2424;
+}
+
+#secondRow span {
+	color: #6f6f6e;
+}
+
+#secondRow > .row {
+	width: 100%;
+}
+
+.wie-collection {
+    padding: 0;
+    background-color:rgba(255, 255, 255, 0);
+}
+
+.collection-item.avatar {
+    background-color:rgba(255, 255, 255, 0);
+    border: 0;
+}
+
+.collapsible {
+    border: 0;
+}
+
+</style> <!-- style for over ons -->
+        <style>
+        #fourthRow a {
+            color: #9c2424;
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRow .tabs {
+            background-color:rgba(255, 255, 255, 0);
+        }
+
+        #fourthRow .tabs .indicator {
+            background-color: #9c2424;
+        }
+        </style> <!-- style voor weerwolvenevent -->
+
+        <script>
+            $(document).on('submit','#new_reservation_form', function(e){
+                var action = $(this).val();
+                if(action != "DONE"){
+                    e.preventDefault();
+                }
+            });
+        </script>
+
+    </head>
+    <body class="container">
+        <ul class="collapsible z-depth-0" data-collapsible="accordion">
+            <li>
+                <div class="row collapsible-header" id="header-about">
+                    <div class="col s12 m6 l4 push-m6 push-l8 teal header-div">
+                        <h5>Over ons</h5>
+                    </div>
+                </div>
+                <div class="row collapsible-body">
+                    <div class="col s12 m12 l12 collapsible-body-div">
+                        <div class="row hide-on-med-and-down" id="firstRow">
+                            <div class="col m6" id="logoTop">
+                                <img src="{% static 'Autospelleider/images/logo.png' %}" width="100%" />
+                            </div>
+                            <div class="col m6" id="tags">
+                                <em><h1 class="left">Voor zij die gebeten zijn </h1><h1 class="right">door weerwolven</h1></em>
+                            </div>
+                        </div>
+                        <div class="row" id="secondRow">
+                            <div class="col m6 middle" id="Wie">
+                                <h3>Wie we zijn</h3>
+                                    <ul class="collection wie-collection">
+                                        <li class="collection-item avatar">
+                                          <img src="https://lh5.googleusercontent.com/-10dSAOX5o7o/AAAAAAAAAAI/AAAAAAAAABE/yPV-utIZC34/s120-c/photo.jpg" alt="" class="circle">
+                                          <span class="title flow-text">Sarah Hendrickx<br></span>
+                                          <span class="flow-text body truncate">
+                                              Voorzitter
+                                          </span>
+                                        </li> <!-- Sarah Hendrickx -->
+                                        <li class="collection-item avatar">
+                                          <img src="https://lh4.googleusercontent.com/-yhAH293EZd0/AAAAAAAAAAI/AAAAAAAAAP4/M85AMoNFgjI/s120-c/photo.jpg" alt="" class="circle">
+                                          <span class="title flow-text">Sara Briers<br></span>
+                                          <span class="flow-text body truncate">
+                                              Notulist
+                                          </span>
+                                        </li> <!-- Sara Briers -->
+                                        <li class="collection-item avatar">
+                                          <img src="https://lh5.googleusercontent.com/-DUYJhhzf8eg/AAAAAAAAAAI/AAAAAAAAGH4/U-uKvcXJDx8/s120-c/photo.jpg" alt="" class="circle">
+                                          <span class="title flow-text">Jonathan Corvers<br></span>
+                                          <span class="flow-text body truncate">
+                                              Penningmeester
+                                          </span>
+                                        </li> <!-- Jonathan Corvers -->
+                                        <li class="collection-item avatar">
+                                          <img src="https://lh4.googleusercontent.com/-G_ivVEn8mbA/AAAAAAAAAAI/AAAAAAAAADw/iQn6A7-_86E/s120-c/photo.jpg" alt="" class="circle">
+                                          <span class="title flow-text">Nikki Corvers<br></span>
+                                          <span class="flow-text body truncate">
+                                              Webmaster
+                                          </span>
+                                        </li> <!-- Nikki Corvers -->
+                                    </ul>
+                            </div>
+                            <div class="col m6 middle" id="Wat">
+                                <h3>Wat we doen</h3>
+                                <span class="flow-text">
+                                    De Limburgse Wolven willen graag evenementen organiseren waar we op grote schaal 'Weerwolven van Wakkerdam' en varianten spelen. Op deze manier kunnen we zowel nieuwe spelers warm maken voor het weerwolvenspel, als weerwolvenfans verrassen met een andere manier van spelen. Zeker niet minder belangrijk willen we mensen van alle leeftijden de kans geven om in een ontspannen sfeer nieuwe mensen te leren kennen.
+                                </span>
+                            </div> <!-- column -->
+                        </div> <!-- secondrow -->
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="row collapsible-header" id="header-event">
+                    <div class="col s12 m6 l4 push-m6 push-l8 teal header-div">
+                        <h5>Weerwolvenevent</h5>
+                    </div>
+                </div>
+                <div class="row collapsible-body">
+                    <div class="row" id="fourthRow">
+                        <div class="col s12">
+                          <ul class="tabs">
+                            <li class="tab col s3">
+                                <a class="active" href="#eventWanneer">
+                                    Wanneer
+                                </a>
+                            </li>
+                            <li class="tab col s3">
+                                <a href="#eventWat">
+                                    Wat
+                                </a>
+                            </li>
+                            <li class="tab col s3">
+                                <a href="#eventWie">
+                                    Wie
+                                </a>
+                            </li>
+                            <li class="tab col s3">
+                                <a href="#eventWaar">
+                                    Waar
+                                </a>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="col s12 m12 l12" id="eventWanneer">
+                            <p>Ons aankomende event zal doorgaan op 28 februari 2015, vanaf 19u00. Vergeet niet je tijdig in te schrijven, het aantal plaatsen is beperkt! Inschrijven kan vanaf 31 oktober 2014.</p>
+                        </div>
+                        <div class="col s12 m12 l12" id="eventWat">
+                            <p>
+                                Op 28 februari  zullen we in grote groep drie maal het spel 'Weerwolven en Waaghalzen' spelen. De burgers en de weerwolven zullen het tegen elkaar opnemen in dorpen van 18 spelers.
+                                Je zult moeten liegen en de juiste mensen op het juiste moment moeten vermoorden om te overleven in deze dorpen waar de wijsvinger een dodelijk wapen is.
+                                <br/>Voor 7EUR mag je de hele avond deelnemen, en krijg je er nog een gratis consumptie bovenop!
+                            </p>
+                        </div>
+                        <div class="col s12 m12 l12" id="eventWie">
+                            <p>Iedereen ouder dan 15 is welkom! Ook als je nog nooit gespeeld hebt, moet je geen schrik hebben om deel te nemen. Onze spelleiders zullen alles uitleggen en we beginnen met een eenvoudig spel. Voor de ervaren spelers voegen we daarna enkele extra's toe om het extra spannend te maken.</p>
+                        </div>
+                        <div class="col s12 m12 l12" id="eventWaar">
+                            <p>
+                                Sint-Jozefinstituut Bokrijk<br>
+                                Hasseltweg 383<br>
+                                3600 Genk-Bokrijk<br>
+                            </p>
+                            <!-- div class="Flexible-container" -->
+                            <iframe width="100%" height="150" frameborder="0" style="border:0"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2513.2428015849255!2d5.4270789999999955!3d50.956215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c120bb3d225fd1%3A0xe54f29335c6c1000!2sSt+Jozefinstituut!5e0!3m2!1sen!2sbe!4v1411228214004"></iframe>
+                            <!-- /div -->
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="row collapsible-header" id="header-inschrijven">
+                    <div class="col s12 m6 l4 push-m6 push-l8 teal header-div">
+                        <h5>Inschrijven</h5>
+                    </div>
+                </div>
+                <form id="new_reservation_form" class="col s12 collapsible-body row" method="post">
+                    {% csrf_token %}
+                    <div class="" id="form-step">
+                        <div class="col s12 m6 l4">
+                            <h4>Uitleg</h4>
+                            <p>
+                                Jij bent de hoofdinschrijver, eerst willen we dus graag jouw gegevens. Onderaan vragen we hoeveel deelnemers je nog wilt inschrijven, jezelf NIET meegerekend!
+                            </p>
+                        </div>
+                        <div class="col s12 m6 l8">
+                            <h4>Formulier</h4>
+                            <div class="row">
+                                  <div class="row">
+                                    <div class="input-field col s6">
+                                      <input id="first_name0" type="text" class="validate">
+                                      <label for="first_name0">Voornaam</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                      <input id="last_name0" type="text" class="validate">
+                                      <label for="last_name0">Achternaam</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <input id="email0" type="email" class="validate">
+                                      <label for="email0">Email</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12 m6 l6">
+                                      <input id="leeftijd0" type="number" class="validate">
+                                      <label for="leeftijd0">Leeftijd</label>
+                                    </div>
+                                    <div class="input-field col s6 m3 l3">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red right" title="Voeg nog een deelnemer toe" type="button" id="add0" value="add" name="add">
+                                            <i class="material-icons">add</i>
+                                        </button>
+                                    </div>
+                                    <div class="input-field col s6 m3 l3">
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen is ingeschreven" type="button" id="done0" value="done" name="done">
+                                            <i class="material-icons">done</i>
+                                        </button>
+                                    </div>
+                                  </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </li>
+            <li>
+                <div class="row collapsible-header" id="header-contact">
+                    <div class="col s12 m6 l4 push-m6 push-l8 teal header-div">
+                        <h5>Contact</h5>
+                    </div>
+                </div>
+                <div class="row collapsible-body">
+                </div>
+            </li>
+        </ul>
+    </body>
+
+</html>

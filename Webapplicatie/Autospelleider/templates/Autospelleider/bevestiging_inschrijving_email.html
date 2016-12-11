@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+     <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Bevestiging inschrijving</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body style="margin: 0; padding: 0;">
+        <p>
+            Beste {{ main_subscriber.first_name }}
+        </p>
+        <p>
+            Bedankt voor je inschrijving! Via <a href="jonathancorvers.pythonanywhere.com/inschrijving/bekijken/{{ reservation_code }}">deze link</a> kan je de gegevens van je inschrijving nog eens bekijken en de verdeling in groepen aanpassen.
+            <br>
+            <strong>Deel deze link niet met iemand die je inschrijving niet mag aanpassen!</strong>
+        </p>
+        <p>Deel de link of de code van een groep zodat je vrienden zich bij je kunnen inschrijven!</p>
+        <table>
+            <thead>
+                <tr>
+                    <td>
+                    </td>
+                    {% for group in group_list %}
+                    <td>
+                        Groep {{ forloop.counter }}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Link:
+                    </td>
+                    {% for group in group_list %}
+                    <td>
+                        <a href="jonathancorvers.pythonanywhere.com/inschrijven/{{ group }}/">{{ group }}</a>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% for sub, code in zipped %}
+                <tr>
+                    <td>
+                        Lid {{ forloop.counter }}:
+                    </td>
+                    {% for group in group_list %}
+                    <td>
+                        {% if sub.group.group_code == group %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>{% if reservation.voorverkoop %}
+            Je hebt je ingeschreven in de voorverkoop periode voor {{ subscribers|length }} deelnemers geeft dit een totaal van €{{ amount_due }},00
+            <br>
+            Denk eraan dat dit dient te zijn overgeschreven naar BE43 3770 5327 8501 voor 18 februari 2017 om het voorverkoop tarief te behouden!{% else %}
+            Je hebt je ingeschreven met {{ subscribers|length }} deelnemers, dit geeft een totaal van €{{ amount_due }},00
+            <br>
+            Denk eraan dat dit dient te zijn overgeschreven naar BE43 3770 5327 8501 voor 4 maart 2017! Indien er minder dan 5 werkdagen voor deze datum over zijn, kan je best betalen aan de inkom.
+        {% endif %}
+        </p>
+        <p>
+            Bedankt en tot binnenkort!
+            <br>
+            Limburgse Wolven
+        </p>
+    </body>
+</html>

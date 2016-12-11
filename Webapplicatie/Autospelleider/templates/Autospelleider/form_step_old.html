@@ -1,0 +1,171 @@
+{% ifequal action 'add' %}
+                    <div class="col s12 m4 l3">
+                        <h4>Uitleg</h4>
+                        <p>
+                            Nu kan je de volgende persoon inschrijven.
+                        </p>
+                    </div>
+                    <div class="col s12 m4 l3">
+                        <h4>Overzicht</h4>
+                        <p id="p-overzicht">
+                            <!--{% for inschrijving in inschrijvingenlist %}
+                            {{ inschrijving.first_name }} {{ inschrijving.last_name }}<br>
+                            {% endfor %}-->
+                        </p>
+                    </div>
+                    <div class="col s12 m4 l6">
+                        <h4>Formulier</h4>
+                        <div class="row">
+                              <div class="row">
+                                <div class="input-field col s6">
+                                  <input id="first_name{{ counter }}" type="text" class="validate">
+                                  <label for="first_name{{ counter }}">Voornaam</label>
+                                </div>
+                                <div class="input-field col s6">
+                                  <input id="last_name{{ counter }}" type="text" class="validate">
+                                  <label for="last_name{{ counter }}">Achternaam</label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="input-field col s12">
+                                  <input id="email{{ counter }}" type="email" class="validate">
+                                  <label for="email{{ counter }}">Email</label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="input-field col s12 m12 l6">
+                                  <input id="leeftijd{{ counter }}" type="number" class="validate">
+                                  <label for="leeftijd{{ counter }}">Leeftijd</label>
+                                </div>
+                                <div class="input-field col s6 m6 l3">
+                                    <button type="button" class="submit btn-floating btn-large waves-effect waves-light red right" title="Voeg nog een deelnemer toe" id="add{{ counter }}" value="add" name="add">
+                                        <i class="material-icons">add</i>
+                                    </button>
+                                </div>
+                                <div class="input-field col s6 m6 l3">
+                                    <button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen is ingeschreven" type="button" id="done{{ counter }}" value="done" name="done">
+                                        <i class="material-icons">done</i>
+                                    </button>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function(){
+                            $('.carousel').carousel();
+                            $('.collapsible').collapsible({
+                                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+                            });
+
+                            $('.submit').click(function() {
+                                subscriptions[{{ counter }}] = $('#first_name{{ counter }}').val() + " " + $('#last_name{{ counter }}').val();
+                                emails[{{ counter }}] = $('#email{{ counter }}').val();
+                                ages[{{ counter }}] = $('#leeftijd{{ counter }}').val().toString();
+                                if (!postdata['first_name{{ counter }}']) {
+                                    postdata['first_name{{ counter }}'] = [];
+                                }
+                                postdata['first_name{{ counter }}'].push($('#first_name{{ counter }}').val());
+
+                                if (!postdata['last_name{{ counter }}']) {
+                                    postdata['last_name{{ counter }}'] = [];
+                                }
+                                postdata['last_name{{ counter }}'].push($('#last_name{{ counter }}').val());
+
+                                if (!postdata['email{{ counter }}']) {
+                                    postdata['email{{ counter }}'] = [];
+                                }
+                                postdata['email{{ counter }}'].push($('#email{{ counter }}').val());
+
+                                if (!postdata['leeftijd{{ counter }}']) {
+                                    postdata['leeftijd{{ counter }}'] = [];
+                                }
+                                postdata['leeftijd{{ counter }}'].push($('#leeftijd{{ counter }}').val());
+
+                                counter = counter + 1;
+                                var action = $(this).val();
+                                var url = "/formStep/";
+                                url = url.concat(counter.toString());
+                                url = url.concat("/");
+                                url = url.concat(action);
+                                url = url.concat("/");
+                                $('#form-step').load(url);
+                            });
+
+                            var i;
+                            for(i = 0; i < {{ counter }}; i++) {
+                                $('#p-overzicht').append(subscriptions[i] + "<br>");
+                            }
+
+                        });
+                    </script>
+{% endifequal %}
+{% ifequal action 'done' %}
+<div class="col s12 m6 l6">
+                        <h4>Uitleg</h4>
+                        <p>
+                            Hier is een overzicht van de personen die je hebt ingeschreven:
+                        </p>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <h4>Overzicht</h4>
+                        <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                  <th>
+                                      Naam
+                                  </th>
+                                  <th>
+                                      E-mailadres
+                                  </th>
+                                  <th>
+                                      Leeftijd
+                                  </th>
+                              </tr>
+                            </thead>
+                            <tbody id="table-body">
+                              <tr>
+                                    <td></td>
+                                    <td>
+                                        <!--<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">-->
+
+                                        <button class="submit btn-floating btn-large waves-effect waves-light red left" title="Iedereen is ingeschreven" type="submit" id="DONE" value="DONE" name="done">
+                                            <i class="material-icons">done</i>
+                                        </button>
+                                    </td>
+                                    <td></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                    </div>
+                    <script>
+                        $(document).ready(function(){
+                            $('.carousel').carousel();
+                            $('.collapsible').collapsible({
+                                accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+                            });
+
+                            $('.submitEnd').click(function() {
+
+                                if (!postdata['csrfmiddlewaretoken']) {
+                                    postdata['csrfmiddlewaretoken'] = [];
+                                }
+                                postdata['csrfmiddlewaretoken'].push($('input[name=csrfmiddlewaretoken]').val());
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{% url 'Autospelleider:createReservation' %}",
+                                    data: postdata,
+                                    success: function(data) {
+                                        $('#form-step').html(data);
+                                    }
+                                });
+                            });
+
+                            slen = subscriptions.length;
+                            var i;
+                            for(i = 0; i < slen; i++) {
+                                $('#table-body').prepend("<tr><td>" + subscriptions[i] + "</td><td>" + emails[i] + "</td><td>" + ages[i] + "</td></tr>");
+                            }
+
+                        });
+                    </script>
+{% endifequal %}

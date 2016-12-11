@@ -1,0 +1,59 @@
+﻿<a id="contact"></a>
+
+<div class="container">
+    <div class="row" id="sixthRow">
+        <div class="col-md-12" id="contactUitlegCol">
+            <div id="contactUitleg">
+                <h3>Stel ons je vraag</h3>
+                <p>
+                    De Limburgse wolven bijten niet! Aarzel dus niet om het contactformulier hieronder in te vullen en ons je vragen te stellen. We werken met een klein team en proberen zo snel mogelijk je vragen te beantwoorden. Je kan een antwoord verwachten binnen 48 uur.
+                </p>
+            </div><!-- contactUitleg -->
+        </div><!-- contactUitlegCol -->
+        <div class="col-md-12" id="contactFormulier">
+            <h3>Contactformulier</h3>
+            <form name="contactForm" novalidate
+                  ng-controller="ContactController as contactCtrl">
+                <div class="form-group">
+                    <label class="control-label" for="cf_naam">Naam</label>
+                    <div>
+                        <input type="text" class="form-control" name="cf_naam"
+                               required data-ng-model="contactCtrl.email.name"
+                               minlength="2">
+                    </div> <!-- column -->
+                </div> <!-- form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="cf_email">E-mailadres</label>
+                    <div>
+                        <input type="email" class="form-control" name="cf_email"
+                               data-ng-model="contactCtrl.email.sender" required>
+                    </div> <!-- column -->
+                </div> <!-- form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="cf_subject">Onderwerp</label>
+                    <div>
+                        <input type="text" class="form-control" name="cf_subject"
+                               data-ng-model="contactCtrl.email.subject" required>
+                    </div> <!-- column -->
+                </div> <!-- form-group -->
+
+                <div class="form-group">
+                    <label class="control-label" for="cf_message">Bericht</label>
+                    <div>
+                        <textarea class="form-control" name="cf_message" rows="3"
+                                  required data-ng-model="contactCtrl.email.message"
+                                  minlength="5"></textarea>
+                    </div> <!-- column -->
+                </div> <!-- form-group -->
+                <button id="btnSend" class="btn btn-wolf"
+                        data-ng-click="contactCtrl.sendEmail()"
+                        data-ng-disabled="contactForm.$invalid">Verzend</button>
+                <div class="row">    
+                    <span data-ng-show="contactCtrl.progress">Even geduld, de mail wordt verstuurd.</span>
+                </div>
+            </form>
+        </div><!-- contactFormulier -->
+    </div><!-- sixthRow -->
+</div><!-- container -->

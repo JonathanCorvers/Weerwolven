@@ -1,0 +1,88 @@
+
+                    <div class="col s12 m6 l6">
+                        <h5>Inschrijving aangepast!</h5>
+                        <p>
+                            De pagina refresht zodadelijk!
+                        </p>
+                    </div>
+                    <div class="col s12 m6 l6">
+                        <h5>Reservatie {{ reservation.id }}</h5>
+                        <table class="table table-striped responsive-table">
+                            <thead>
+                              <tr>
+                                  <th>
+                                      Naam
+                                  </th>
+                                  <th>
+                                      E-mailadres
+                                  </th>
+                                  <th class="hide-on-small-only">
+                                        Leeftijd
+                                  </th>
+                                  <th class="hide-on-med-and-up">
+                                  </th>
+                                  <th>
+                                      Groepscode
+                                  </th>
+                              </tr>
+                            </thead>
+                            <tbody id="table-body">
+                            {% for subscription, group_code in zipped %}
+                              <tr>
+                                    <td>
+                                        {{ subscription.first_name }} {{ subscription.last_name }}
+                                    </td>
+                                    <td>
+                                        {{ subscription.email }}
+                                    </td>
+                                    <td class="hide-on-small-only">
+                                        {{ subscription.age }}
+                                    </td>
+                                    <td class="hide-on-med-and-up">
+                                    </td>
+                                    <td>
+                                        {{ group_code }}
+                                    </td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+                    <div class="col s12 m12 l12">
+                        {% if issues|length < 1 %}
+                        <p id="issues2" class="flow-text red hide">
+                        </p>
+                        {% else %}
+                        <p id="issues2" class="flow-text red">
+                        {% for issue in issues %}
+                            {{ issue }} <br>
+                        {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <div class="progress">
+                        <div id="progress-to-refresh" class="determinate" style="width: 100%"></div>
+                    </div>
+ <script>
+ function refresh() {
+    window.location.reload(true);
+ }
+ setTimeout(refresh, 10000);
+ </script>
+<style>
+     /* The animation code */
+    @keyframes progress_to_refresh {
+        from {width: 0%;}
+        to {width: 100%;}
+    }
+
+    /* The element to apply the animation to */
+    #progress-to-refresh {
+        animation-name: progress_to_refresh;
+        animation-duration: 10s;
+    }
+
+    #issues {
+        margin-bottom: 5%;
+    }
+</style>

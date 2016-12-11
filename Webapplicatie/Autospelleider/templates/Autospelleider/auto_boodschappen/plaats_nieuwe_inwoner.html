@@ -1,0 +1,34 @@
+{% extends "Autospelleider/auto_boodschappen/spelleider_interface_auto_m.html" %}
+
+{% block js %}
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block startform %}
+<!-- Voor wanneer de cirkel van inwoners een form moet zijn -->
+{% endblock %}
+
+{% block villager_action_buttons %}
+                            {% for villager in villagers_list %}
+                            <div class="badge" id="badge{{ forloop.counter }}">
+                                <div class="rotated-form">
+                                    {% csrf_token %}
+                                    <a href="{% url 'Autospelleider:enterVillage' village_name=village.village_name villager_name=villager_name villager_name_left=villager.participant.first_name %}"><button id="button{{ forloop.counter }}" data-target="modal{{ forloop.counter }}" class="btn btn-info rotated-btn waves-effect waves-light levend{{ villager.alive }}">{{ villager.participant.first_name }}</button></a>
+                                </div>
+                            </div>
+                            {% endfor %}
+{% endblock %}
+
+{% block spelfase_kort %}Wijs persoon die links van de nieuwe zit{% endblock %}
+
+{% block spelfase_card_title %}Plaats nieuwe bewoner{% endblock %}
+
+{% block spelfase_card_explanation %}Het is de bedoeling dat je de persoon links, dus tegen de klok in, van de nieuwe inwoner aanduidt.{% endblock %}
+
+
+{% block villager_action_buttons_modals %}
+{%endblock %}
+
+

@@ -1,0 +1,75 @@
+{% extends "Autospelleider/spelleider_inteface_auto.html" %}
+
+{% block spelleider_auto_boodschap %}
+                        <div id='villagersCircle'>
+                            {% for villager in villagers_list %}
+                            <div class="badge" id="badge{{ forloop.counter }}">
+                                <form class="rotated-form" action="{% url 'Autospelleider:spelleiderInterface' village_name=village.village_name participant_ID=villager.participant.participant_ID overlayBool=True %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" id="button{{ forloop.counter }}" value="{{ villager.participant.first_name }}" class="btn btn-info btn-lg rotated-btn" {% if overlayBool %}disabled{% endif %}/>
+                                </form>
+                            </div>
+                            {% endfor %}
+                            <div id="timerAnimationWrapWrap">
+                                <div id="timerAnimationWrap">
+                                    <div id="timerAnimation">
+                                        {% if timerOnBool %}
+                                        <div id="defaultCountdown"></div>
+                                        {% else %}
+                                        <button id="continueButton" class="btn btn-lg btn-info"></button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="autoText">
+                                <div style="float:left;clear:left;height: 4.347826086%;width:35.416947972%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:35.416947972%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:25.309094148%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:25.309094148%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:18.874302036%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:18.874302036%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:14.081061648%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:14.081061648%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:10.329809585%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:10.329809585%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:7.344745934%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:7.344745934%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:4.973227875%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:4.973227875%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:3.122046406%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:3.122046406%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:1.731297149%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:1.731297149%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:0.761949335%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:0.761949335%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:0.18939462%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:0.18939462%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:0%"></div><div style="float:right;clear:right;height: 4.347826086%;width:0%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:0.18939462%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:0.18939462%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:0.761949335%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:0.761949335%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:1.731297149%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:1.731297149%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:3.122046406%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:3.122046406%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:4.973227875%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:4.973227875%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:7.344745934%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:7.344745934%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:10.329809585%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:10.329809585%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:14.081061648%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:14.081061648%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:18.874302036%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:18.874302036%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:25.309094148%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:25.309094148%"></div>
+                                <div style="float:left;clear:left;height: 4.347826086%;width:35.416947972%"></div>
+                                <div style="float:right;clear:right;height: 4.347826086%;width:35.416947972%"></div>
+                                <p id="autoTextSpan">
+                                    Hey! Jonathan hier. Ik ga proberen in jouw plaats na te denken. Eens zien of het lukt.
+                                </p>
+                            </div>
+                        </div>
+{% endblock %}
